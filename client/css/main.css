@@ -1,0 +1,76 @@
+body {
+	color: #000;
+	background-color: #d5d5d5;
+}
+span,text,button, input, select, textarea{
+	color:black;
+	fill:black;
+	font-size: 13px;
+}
+.slider{
+	padding:2px;
+}
+.outer-div{
+	background-color: #fff;
+	border-radius: 7px;
+	//border-left: 4px solid #d5d5d5;
+	border: 2px solid #d5d5d5;
+
+}
+.block-div {
+	height: 100%;
+	border-radius: 7px;
+	flex:1;
+}
+
+#content-div{
+	width: 100%;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+	display: flex;
+}
+#left-div{
+	left:0%;
+	width: 20%;
+	height: 100%;
+	background-color: #d5d5d5;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#left-top-div{
+	left:0%;
+	width: 100%;
+	height: 60%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#left-bottom-div{
+	width: 100%;
+	height:40%;
+	flex:1;
+	display: flex;
+	flex-direction: column;
+}
+#middle-div{
+	left:20%;
+	width: 20%;
+	height: 100%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#right-div{
+	flex:1;
+	display: flex;
+	flex-direction: column;
+}
+
+
+
+
+
+
+

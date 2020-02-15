@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+    <!-- css library -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="css/icheck/aero.css">
+    <link rel="stylesheet" type="text/css" href="css/d3tip-example-styles.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-switch.css">
+	<link rel="stylesheet" type="text/css" href="css/wan-spinner.css">
+	<link href="css/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-slider.css">
+	
+	
+    <!-- js library -->
+    <script src="jslib/jquery.min.js"></script>
+    <script src="jslib/bootstrap-slider.min.js"></script>
+    <script src="jslib/d3.js"></script>
+    <script src="jslib/underscore-min.js"></script>
+    <script src="jslib/bootstrap.min.js"></script>
+    <script src="jslib/buttons.js"></script>
+    <script src="jslib/icheck.js"></script>
+    <script src="jslib/d3tip.js"></script>
+	<script src="jslib/bootstrap-switch.js"></script>
+	<script src="jslib/spin.min.js"></script>
+	
+    <script src="jslib/jquery.contextMenu.js" type="text/javascript"></script>
+    <!-- css -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+    
+
+<body>
+
+<div id="content-div">
+	<div id="left-div" >
+		<div id="left-top-div" class="outer-div">
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>感染率:</span>&nbsp;
+			<input  id="infectRate" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
+				data-slider-value="0.12"/>
+			</div>
+
+			<div class="slider"> 
+			&nbsp;&nbsp;
+			<span>康复率:</span>&nbsp;
+			<input  id="recoverRate" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
+				data-slider-value="0.3"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>潜伏期时长:</span>&nbsp;
+			<input  id="incubateTime" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="30" data-slider-step="1"  
+				data-slider-value="10"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>患病期时长:</span>&nbsp;
+			<input  id="sickTime" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+				data-slider-value="30"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>持续时间:</span>&nbsp;
+			<input  id="duration" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="1" data-slider-max="1000" data-slider-step="1"  
+				data-slider-value="150"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>总人数:</span>&nbsp;
+			<input  id="peopleNum" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="100000" data-slider-step="1"  
+				data-slider-value="1000"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>最初感染数:</span>&nbsp;
+			<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+				data-slider-value="30"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>最初潜伏数:</span>&nbsp;
+			<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+				data-slider-value="30"/> 
+			</div>
+
+			<div class="slider">
+			&nbsp;&nbsp;
+			<span>最初康复数:</span>&nbsp;
+			<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"  
+				data-slider-min="1" data-slider-max="100" data-slider-step="1"  
+				data-slider-value="10"/> 
+			</div>
+		</div>
+		
+		<div id="left-bottom-div" class="outer-div">
+			
+		</div>
+	</div>
+	<div id="middle-div" class="outer-div">
+		
+	</div>
+	<div id="right-div" class="outer-div">
+		
+	</div>
+</div>
+<div id="loading-div"></div>
+
+
+<!-- js -->
+<script src="js/params.js"></script>
+<script src="js/observer.js"></script>
+
+</body>
+
+
+</html>
+
+
