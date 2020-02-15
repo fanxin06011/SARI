@@ -84,6 +84,10 @@ function Params(Observer){
 		}
 		if(message=="update_data_range" && from!=params){
 			console.log(data);
+			// data.time 事件范围，从第几天到第几天，数据的第一天为0.
+			// data.area 一个字典，表示各个省份是否被选中，选中为true， 不选中为false
+			// data.new 每日新增的数组，从第0天到最后一天。
+			// data.accu 每日的累加数组，从第0天到最后一天。
 
 		}
 	}
