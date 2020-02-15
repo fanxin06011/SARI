@@ -127,9 +127,10 @@ DataPanel.prototype.load_time = function(){
 		.attr("class", "y-axis")
 		.call(d3.axisRight(y_scale)); // Create an axis component with d3.axisLeft
 
+	let panel = this
 	var brush = d3.brushX()
 	    .extent([[0, 0], [width, height]])
-	    .on("brush end", function(d){
+	    .on("brush", function(d){
 	    	let selection = d3.event.selection
 			let left_date = Math.floor(x_scale.invert(selection[0]))
 			let right_date = Math.floor(x_scale.invert(selection[1]))
@@ -144,7 +145,25 @@ DataPanel.prototype.load_time = function(){
 			right_date_text
 				.text(get_day_en(right_date, data.begin))
 				.attr("x", selection[1])
-	    });
+			// panel.send_message()
+	    })
+	    .on("end", function(d){
+	    	let selection = d3.event.selection
+			let left_date = Math.floor(x_scale.invert(selection[0]))
+			let right_date = Math.floor(x_scale.invert(selection[1]))
+			if (right_date >= data_item_number)
+				right_date = data_item_number - 1
+			date_range.left = left_date
+			date_range.right = right_date
+
+			left_date_text
+				.text(get_day_en(left_date, data.begin))
+				.attr("x", selection[0])
+			right_date_text
+				.text(get_day_en(right_date, data.begin))
+				.attr("x", selection[1])
+			panel.send_message()
+	    })
 
 	this.time.append("g")
 		.attr("class", "brush")
@@ -192,6 +211,8 @@ DataPanel.prototype.reload_time = function(){
     	.range([height, 0]);
     let x_scale = this.x_scale
     let y_scale = this.y_scale
+
+    console.log("???",this)
 
     d3.select(".y-axis")
     	.call(d3.axisRight(this.y_scale))
@@ -349,9 +370,19 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 			}
 			province_button.classed("selected_area_button", d => place_is_choose[d])
 			panel.reload_time()
+			panel.send_message()	
 		})
+}
 
-
+DataPanel.prototype.send_message = function(){
+	let send_data = {
+		time: this.date_range,
+		area: this.place_is_choose,
+		new_data: this.new_data,
+		accu_data: this.accu_data
+	}
+	let event_name = "update_data_range"
+	obs.fireEvent(event_name, send_data, this)
 }
 
 
@@ -373,13 +404,15 @@ let NCPdata = function(){
 
 		// 获得时间范围：
 		console.log(panel.date_range) // 从第一天开始为0.
-		console.log(panel.data.begin) // 2020年1月1日为1
+		console.log(panel.data.date_range) // 2020年1月1日为1
 
 		// 获得空间范围：
 		console.log(panel.place_is_choose) // 一个字典，存放着各个省份是否被选中。
 
     })
 }
+
+
 
 // function update_data_selection(){
 // 	console.log()

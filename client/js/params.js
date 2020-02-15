@@ -82,6 +82,11 @@ function Params(Observer){
 			//console.log(data);
 			
 		}
+		if(message=="update_data_range" && from!=params){
+			console.log(data);
+			
+			
+		}
 	}
 	
 	Observer.addView(params);
