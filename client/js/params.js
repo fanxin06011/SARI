@@ -68,14 +68,14 @@ function Params(Observer){
 			dataType: 'json',
 			success: function(evt_data) {
 				console.log(evt_data);
-				
+				Observer.fireEvent("showResult",evt_data,params);
 			},
 			error: function(jqXHR) {
 				console.log('post error!!', jqXHR);
 			},
 		});
 	}
-	
+	params.getdata();
 	
     params.onMessage = function(message, data, from){
 		if(message=="select_subgraph" && from!=params){

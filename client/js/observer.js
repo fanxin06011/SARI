@@ -21,6 +21,6 @@ function Observer() {
 
 var obs = Observer();
 var params = Params(obs);
-
+var line = Line(obs);
 
 

@@ -67,6 +67,12 @@ span,text,button, input, select, textarea{
 	display: flex;
 	flex-direction: column;
 }
+#line-div{
+	left:0%;
+	width: 100%;
+	height: 30%;
+}
+
 .modelImage{
 	width:100%;
 	display:flex;

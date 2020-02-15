@@ -70,7 +70,7 @@
 					<td>
 						<input  id="infectRate" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-							data-slider-value="0.12"/>
+							data-slider-value="0.9"/>
 					</td>
 				</tr>
 				<tr>
@@ -78,7 +78,7 @@
 					<td>
 						<input  id="recoverRate" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-							data-slider-value="0.3"/> 
+							data-slider-value="0.2"/> 
 					</td>
 				</tr>
 				<tr>
@@ -86,15 +86,15 @@
 					<td>
 						<input  id="sigma" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-							data-slider-value="0.8"/> 
+							data-slider-value="0.05"/> 
 					</td>
 				</tr>
 				<tr>
 					<td><span>&nbsp; &nbsp; 初始健康数 S_0:</span></td>
 					<td>
 						<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="10000" data-slider-step="1"  
-							data-slider-value="5000"/> 
+							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+							data-slider-value="10"/> 
 					</td>
 				</tr>
 				<tr>
@@ -102,7 +102,7 @@
 					<td>
 						<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="30"/> 
+							data-slider-value="3"/> 
 					</td>
 				</tr>
 				<tr>
@@ -110,15 +110,15 @@
 					<td>
 						<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="30"/> 
+							data-slider-value="1"/> 
 					</td>
 				</tr>
 				<tr>
 					<td><span>&nbsp; &nbsp; 初始康复数 R_0:</span></td>
 					<td>
 						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="1" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="10"/> 
+							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+							data-slider-value="0"/> 
 					</td>
 				</tr>
 			</table>
@@ -132,7 +132,9 @@
 		
 	</div>
 	<div id="right-div" class="outer-div">
+		<div id="line-div">
 		
+		</div>
 	</div>
 </div>
 <div id="loading-div"></div>
@@ -140,6 +142,7 @@
 
 <!-- js -->
 <script src="js/params.js"></script>
+<script src="js/line.js"></script>
 <script src="js/observer.js"></script>
 <script src="js/data.js"></script>
 <script src="js/data_chooce.js"></script>
