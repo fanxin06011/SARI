@@ -84,8 +84,7 @@ function Params(Observer){
 		}
 		if(message=="update_data_range" && from!=params){
 			console.log(data);
-			
-			
+
 		}
 	}
 	

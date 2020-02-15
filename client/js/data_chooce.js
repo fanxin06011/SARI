@@ -75,8 +75,8 @@ DataPanel.prototype.load_time = function(){
 	let accu_data = this.get_data(this.data.accu)
 	this.new_data = new_data
 	this.accu_data = accu_data
-	console.log(new_data)
-	console.log(accu_data)
+	// console.log(new_data)
+	// console.log(accu_data)
 
 
 	this.y_scale = d3.scaleLinear()
@@ -250,7 +250,7 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 	let position = this.area_position
 	let provinces = this.provinces
 
-	console.log(places)
+	// console.log(places)
 	let width = position.width
 	let height = position.height
 	let left = position.left
@@ -396,18 +396,19 @@ let NCPdata = function(){
 		// console.log(original_data)
 		data = get_modify_data(original_data)
 		window._data = data
-		console.log(data)
+		// console.log(data)
 		panel = new DataPanel(data, provinces)
 		panel.load_title()
 		panel.load_time()
 		panel.load_range(places)
+		panel.send_message()
 
-		// 获得时间范围：
-		console.log(panel.date_range) // 从第一天开始为0.
-		console.log(panel.data.date_range) // 2020年1月1日为1
+		// // 获得时间范围：
+		// console.log(panel.date_range) // 从第一天开始为0.
+		// console.log(panel.data.date_range) // 2020年1月1日为1
 
-		// 获得空间范围：
-		console.log(panel.place_is_choose) // 一个字典，存放着各个省份是否被选中。
+		// // 获得空间范围：
+		// console.log(panel.place_is_choose) // 一个字典，存放着各个省份是否被选中。
 
     })
 }
