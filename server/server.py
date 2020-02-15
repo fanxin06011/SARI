@@ -20,26 +20,31 @@ client_file_root_path = os.path.abspath(client_file_root_path)
 
 class SEIR(tornado.web.RequestHandler):
     def get(self):
+        type = json.loads(self.get_argument('type'))
         params = json.loads(self.get_argument('params'))
-        print(params)
-        # nb of population
-        N = params['peopleNum']
-        # coefficient of infection
-        beta = params['infectRate']
-        # coefficient of recovery
-        gamma = params['recoverRate']
-        # time from exposed to infectious
-        Te = params['incubateTime']
-        # nb of infectious at the beginning
-        I_0 = params['initInfectedNum']
-        # nb of exposed at the beginning
-        E_0 = params['initIncubatedNum']
-        # nb of recovered at the beginning
-        R_0 = params['initRecoverNum']
-        # duration
-        T = params['duration']
-        Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, Te, T)
-        evt_unpacked = {'Susceptible': Susceptible,'Exposed':Exposed,'Infectious':Infectious,'Recovered':Recovered}
+        print(type, params)
+        evt_unpacked={}
+        if type==1:
+            # coefficient of infection
+            beta = params['infectRate']
+            # coefficient of recovery
+            gamma = params['recoverRate']
+            # coefficient from exposed to infectious
+            sigma = params['sigma']
+            # nb of infectious at the beginning
+            I_0 = params['initInfectedNum']
+            # nb of exposed at the beginning
+            E_0 = params['initIncubatedNum']
+            # nb of recovered at the beginning
+            R_0 = params['initRecoverNum']
+            S_0 = params['initSusceptibleNum']
+            # nb of population
+            N = S_0 + I_0 + E_0 + R_0
+            # duration
+            T = 50
+            Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T)
+            evt_unpacked = {'Susceptible': Susceptible, 'Exposed': Exposed, 'Infectious': Infectious,
+                            'Recovered': Recovered}
         evt = json.dumps(evt_unpacked)
         self.write(evt)
 

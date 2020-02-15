@@ -1,6 +1,8 @@
 import scipy.integrate as spi
 import numpy as np
 
+
+
 ############## input ####################
 # N: nb of population
 # I_0: nb of infectious at the beginning
@@ -8,7 +10,7 @@ import numpy as np
 # R_0: nb of recovered at the beginning
 # beta: coefficient of infection
 # gamma: coefficient of recovery
-# Te: time from exposed to infectious
+# sigma: coefficient from exposed to infectious
 # T: duration
 
 
@@ -16,7 +18,7 @@ import numpy as np
 # nb of Susceptible, Exposed, Infectious and Recovered each day from day 0 to day T
 
 
-def SEIR_result(N, I_0, E_0, R_0, beta, gamma, Te, T):
+def SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T):
 
     # nb of susceptible at the beginning
     S_0 = N - I_0 - R_0 - E_0
@@ -34,9 +36,9 @@ def SEIR_result(N, I_0, E_0, R_0, beta, gamma, Te, T):
         # change of susceptible
         Y[0] = -(beta * X[0] * X[2]) / N
         # change of exposed
-        Y[1] = (beta * X[0] * X[2]) / N - X[1] / Te
+        Y[1] = (beta * X[0] * X[2]) / N - sigma * X[1]
         # change of infectious
-        Y[2] = X[1] / Te - gamma * X[2]
+        Y[2] = sigma * X[1] - gamma * X[2]
         # change of recovered
         Y[3] = gamma * X[2]
         return Y
@@ -45,31 +47,32 @@ def SEIR_result(N, I_0, E_0, R_0, beta, gamma, Te, T):
     return RES[:, 0].tolist(), RES[:, 1].tolist(), RES[:, 2].tolist(), RES[:, 3].tolist()
 
 
-############## Example ###################3
+############## Example ###################
 # nb of population
-N = 10000
+N = 14
 
 # coefficient of infection
-beta = 0.6
+beta = 0.8
 
 # coefficient of recovery
-gamma = 0.1
+gamma = 0.2
 
-# time from exposed to infectious
-Te = 14
+# coefficient from exposed to infectious
+sigma = 0.7
 
 # nb of infectious at the beginning
-I_0 = 1
+I_0 = 3
 
 # nb of exposed at the beginning
-E_0 = 0
+E_0 = 1
 
 # nb of recovered at the beginning
 R_0 = 0
 
 # duration
-T = 150
+T = 50
 
-Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, Te, T)
+Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T)
+
 
 

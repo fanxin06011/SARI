@@ -38,77 +38,87 @@
 <div id="content-div">
 	<div id="left-div" >
 		<div id="left-top-div" class="outer-div">
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>感染率:</span>&nbsp;
-			<input  id="infectRate" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-				data-slider-value="0.12"/>
-			</div>
-
-			<div class="slider"> 
-			&nbsp;&nbsp;
-			<span>康复率:</span>&nbsp;
-			<input  id="recoverRate" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-				data-slider-value="0.3"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>潜伏期时长:</span>&nbsp;
-			<input  id="incubateTime" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="30" data-slider-step="1"  
-				data-slider-value="10"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>患病期时长:</span>&nbsp;
-			<input  id="sickTime" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-				data-slider-value="30"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>持续时间:</span>&nbsp;
-			<input  id="duration" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="1" data-slider-max="1000" data-slider-step="1"  
-				data-slider-value="150"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>总人数:</span>&nbsp;
-			<input  id="peopleNum" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="100000" data-slider-step="1"  
-				data-slider-value="1000"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>最初感染数:</span>&nbsp;
-			<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-				data-slider-value="30"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>最初潜伏数:</span>&nbsp;
-			<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-				data-slider-value="30"/> 
-			</div>
-
-			<div class="slider">
-			&nbsp;&nbsp;
-			<span>最初康复数:</span>&nbsp;
-			<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"  
-				data-slider-min="1" data-slider-max="100" data-slider-step="1"  
-				data-slider-value="10"/> 
-			</div>
+			<table border="0" width="100%">
+				<tr>
+					<td><span>&nbsp; &nbsp; 模型:</span></td>
+					<td>
+						<select id="modelUsed">
+						  <option value="0"><span>SIR</span></option>
+						  <option value="1" selected = "selected"><span>SEIR</span></option>
+						  <option value="2"><span>SIJR</span></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" >
+						<div class="modelImage" id="modelImage0">
+							<img src="./image/SIR.jpg"/>
+						</div>
+						<div class="modelImage" id="modelImage1">
+							<img src="./image/SEIR.jpg"/>
+						</div>
+						<div class="modelImage" id="modelImage2">
+							<img src="./image/SIJR.jpg"/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 感染率 &#946;:</span></td>
+					<td>
+						<input  id="infectRate" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
+							data-slider-value="0.12"/>
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 康复率 &#947;:</span></td>
+					<td>
+						<input  id="recoverRate" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
+							data-slider-value="0.3"/> 
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 发病率 &#963;:</span></td>
+					<td>
+						<input  id="sigma" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
+							data-slider-value="0.8"/> 
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 初始健康数 S_0:</span></td>
+					<td>
+						<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="0" data-slider-max="10000" data-slider-step="1"  
+							data-slider-value="5000"/> 
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 初始感染数 I_0:</span></td>
+					<td>
+						<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+							data-slider-value="30"/> 
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 初始潜伏数 E_0:</span></td>
+					<td>
+						<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
+							data-slider-value="30"/> 
+					</td>
+				</tr>
+				<tr>
+					<td><span>&nbsp; &nbsp; 初始康复数 R_0:</span></td>
+					<td>
+						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"  
+							data-slider-min="1" data-slider-max="100" data-slider-step="1"  
+							data-slider-value="10"/> 
+					</td>
+				</tr>
+			</table>
 		</div>
 		
 		<div id="left-bottom-div" class="outer-div">

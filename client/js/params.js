@@ -11,19 +11,11 @@ function Params(Observer){
 	.on('change', function (e) {  
 		params.getdata();
 	});
-	$('#incubateTime').slider({formatter: function (value) {return 'Current value: ' + value;  }})
+	$('#sigma').slider({formatter: function (value) {return 'Current value: ' + value;  }})
 	.on('change', function (e) {  
 		params.getdata();
 	});
-	$('#sickTime').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#duration').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#peopleNum').slider({formatter: function (value) {return 'Current value: ' + value;  }})
+	$('#initSusceptibleNum').slider({formatter: function (value) {return 'Current value: ' + value;  }})
 	.on('change', function (e) {  
 		params.getdata();
 	});
@@ -41,16 +33,29 @@ function Params(Observer){
 		params.getdata();
 	});
 
+	var modelUsed=parseInt(document.getElementById("modelUsed").value);
+	console.log("newtype "+modelUsed);
+	$(".modelImage").hide();
+	$("#modelImage"+modelUsed).show();
+	$("#modelUsed").change(function(){
+		var newtype=parseInt(document.getElementById("modelUsed").value);
+		console.log("aaa "+newtype);
+		if(modelUsed!=newtype){
+			modelUsed=newtype;
+			console.log("newtype "+modelUsed);
+			$(".modelImage").hide();
+			$("#modelImage"+modelUsed).show();
+		}
+	});
 
 	params.getdata=function(){
 		let obj = {};
+		obj.type=parseInt(document.getElementById("modelUsed").value);
 		obj.params=JSON.stringify({
 			'infectRate':parseFloat($('#infectRate').val()),
 			'recoverRate':parseFloat($('#recoverRate').val()),
-			'incubateTime':parseInt($('#incubateTime').val()),
-			'sickTime':parseInt($('#sickTime').val()),
-			'duration':parseInt($('#duration').val()),
-			'peopleNum':parseInt($('#peopleNum').val()),
+			'sigma':parseFloat($('#sigma').val()),
+			'initSusceptibleNum':parseInt($('#initSusceptibleNum').val()),
 			'initInfectedNum':parseInt($('#initInfectedNum').val()),
 			'initIncubatedNum':parseInt($('#initIncubatedNum').val()),
 			'initRecoverNum':parseInt($('#initRecoverNum').val())
