@@ -109,7 +109,7 @@ function Line(Observer){
 			.text(function(d,i) {;return keysMap[d]; });
 		
 		// 每天新增 柱状图
-		var new_data=true_data["new_data"].slice(true_data["time"]["left"],true_data["time"]["right"]+1);
+		var new_data=true_data["diagnosed_new"].slice(true_data["time"]["left"],true_data["time"]["right"]+1);
 		console.log(new_data);
 		var newmax=_.max(new_data);
 		var y_new_scale = d3.scaleLinear().domain([0,newmax]).range([height-padding.bottom, padding.top]);
@@ -145,7 +145,7 @@ function Line(Observer){
 				for(var j=0;j<keys.length;j++){
 					str=str+keysMap[keys[j]]+": "+Math.round(values[j][i])+" \r";
 				}
-				str=str+"新增: "+d;
+				str=str+"新增确诊: "+d;
 				return str;
 			});
 	}

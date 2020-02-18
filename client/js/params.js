@@ -71,13 +71,8 @@ function Params(Observer){
 			},
 		});
 	}
-	//params.getdata();
 	
     params.onMessage = function(message, data, from){
-		if(message=="select_subgraph" && from!=params){
-			//console.log(data);
-			
-		}
 		if(message=="update_data_range" && from!=params){
 			console.log(data);
 			// data.time 事件范围，从第几天到第几天，数据的第一天为0.
