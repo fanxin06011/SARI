@@ -8,7 +8,7 @@ function Params(Observer){
 
 	for(var i=0;i<paramsIdArr.length;i++){
 		$('#'+paramsIdArr[i]).slider({formatter: function (value) {return 'Current value: ' + value;  }})
-		.on('change', function (e) {  
+		.on('change', function (e) {
 			$("#cur_"+paramsIdArr[i]).text(parseFloat($('#'+paramsIdArr[i]).val()));
 			window.clearTimeout(timeOutFunction);
 			timeOutFunction = setTimeout(function () {
@@ -17,7 +17,7 @@ function Params(Observer){
 		});
 	}
 
-	var modelUsed=parseInt(document.getElementById("modelUsed").value);	
+	var modelUsed=parseInt(document.getElementById("modelUsed").value);
 
 	// 获取模型图片高度最大值
 	// 模型的结构的图示要占一个固定的空间
@@ -71,7 +71,7 @@ function Params(Observer){
 			},
 		});
 	}
-	
+
     params.onMessage = function(message, data, from){
 		if(message=="update_data_range" && from!=params){
 			console.log(data);
@@ -81,12 +81,19 @@ function Params(Observer){
 			// data.accu 每日的累加数组，从第0天到最后一天。
 			duration=data.time["right"]-data.time["left"];
 			true_data=data;
+
+			console.log(data.diagnosed_accu[data.time.left]);
+			console.log(data.dead_accu[data.time.left] + data.cure_accu[data.time.left]);
+			$('#initInfectedNum').slider('setValue', data.diagnosed_accu[data.time.left]);
+			$('#initRecoverNum').slider('setValue', data.dead_accu[data.time.left] + data.cure_accu[data.time.left]);
+
+
 			params.getdata();
 		}
 	}
-	
+
 	Observer.addView(params);
 	return params;
 }
-	
-	
+
+
