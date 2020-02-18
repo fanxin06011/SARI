@@ -41,7 +41,7 @@ class SEIR(tornado.web.RequestHandler):
             # nb of population
             N = S_0 + I_0 + E_0 + R_0
             # duration
-            T = 50
+            T = params['duration']
             Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T)
             evt_unpacked = {'Susceptible': Susceptible, 'Exposed': Exposed, 'Infectious': Infectious,
                             'Recovered': Recovered}

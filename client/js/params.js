@@ -1,6 +1,6 @@
 function Params(Observer){
 	var params={};
-
+	var duration=50;
 	
 
 	$('#infectRate').slider({formatter: function (value) {return 'Current value: ' + value;  }})
@@ -48,7 +48,7 @@ function Params(Observer){
 		}
 	});
 
-	params.getdata=function(){
+	params.getdata=function(true_data){
 		let obj = {};
 		obj.type=parseInt(document.getElementById("modelUsed").value);
 		obj.params=JSON.stringify({
@@ -58,7 +58,8 @@ function Params(Observer){
 			'initSusceptibleNum':parseInt($('#initSusceptibleNum').val()),
 			'initInfectedNum':parseInt($('#initInfectedNum').val()),
 			'initIncubatedNum':parseInt($('#initIncubatedNum').val()),
-			'initRecoverNum':parseInt($('#initRecoverNum').val())
+			'initRecoverNum':parseInt($('#initRecoverNum').val()),
+			'duration':duration,
 		});
 		console.log(obj);
 		$.ajax({
@@ -66,16 +67,16 @@ function Params(Observer){
 			url: 'SEIR',
 			data: obj,
 			dataType: 'json',
-			success: function(evt_data) {
-				console.log(evt_data);
-				Observer.fireEvent("showResult",evt_data,params);
+			success: function(model_data) {
+				console.log(model_data);
+				Observer.fireEvent("showResult",[true_data,model_data],params);
 			},
 			error: function(jqXHR) {
 				console.log('post error!!', jqXHR);
 			},
 		});
 	}
-	params.getdata();
+	//params.getdata();
 	
     params.onMessage = function(message, data, from){
 		if(message=="select_subgraph" && from!=params){
@@ -88,7 +89,8 @@ function Params(Observer){
 			// data.area 一个字典，表示各个省份是否被选中，选中为true， 不选中为false
 			// data.new 每日新增的数组，从第0天到最后一天。
 			// data.accu 每日的累加数组，从第0天到最后一天。
-
+			duration=data.time["right"]-data.time["left"];
+			params.getdata(data);
 		}
 	}
 	

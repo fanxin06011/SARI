@@ -85,7 +85,10 @@ span,text,button, input, select, textarea{
 	height:auto;
 }
 
-
+#line-selector{
+	height: 20px;
+	width: 100%;
+}
 
 
 
