@@ -466,7 +466,11 @@ DataPanel.prototype.send_message = function(){
 	let send_data = {
 		time: this.date_range,
 		area: this.place_is_choose,
-		data: this.data,
+		diagnosed_accu: this.get_data(this.data.accu),
+		cure_accu: this.get_data(this.data.cure.accu),
+		dead_accu: this.get_data(this.data.dead.accu),
+		original_data: this.data
+		// data: this.data,
 	}
 	let event_name = "update_data_range"
 	obs.fireEvent(event_name, send_data, this)
