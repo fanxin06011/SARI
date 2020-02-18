@@ -1,19 +1,19 @@
 .province_button.selected_area_button rect{
-	fill: #ffffb3;
-	stroke-width: 2px;
-	stroke: #444;
+	fill: #DE5E5B;
+	stroke-width: 0px;
+	/*stroke: #444;*/
 }
 
 .province_button.selected_area_button text{
-	fill: #444;
+	fill: #eee;
 }
 
 .province_button rect{
 	fill: white;
 	stroke-width: 1px;
-	stroke: #ccc;
+	stroke: #606060;
 }
 
 .province_button text{
-	fill: #ccc;
+	fill: #606060;
 }

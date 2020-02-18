@@ -26,8 +26,8 @@ let DataPanel = function(data, provinces){
 	// 	.attr("height", this.height)
 
 	this.title_position = {left: 0, top: 0, width: this.width, height: this.height * 0.05};
-	this.time_position = {left: this.width * 0.05, top: this.height * 0.05, width: this.width * 0.9, height: this.height * 0.42};
-	this.area_position = {left: 0, top: this.height * 0.5, width: this.width, height: this.height * 0.5};
+	this.time_position = {left: this.width * 0.08, top: this.height * 0.07, width: this.width * 0.84, height: this.height * 0.40};
+	this.area_position = {left: this.width * 0.05, top: this.height * 0.52, width: this.width * 0.9, height: this.height * 0.48};
 	
 	// this.load_title(this.svg, this.title_position)
 }
@@ -38,9 +38,18 @@ DataPanel.prototype.load_title = function(){
 		.attr("transform", function(d){
 			return "translate(" + title_position.left + "," + title_position.top + ")"
 		})
+	// this.title.append('rect')
+	// 	.attr("x", title_position.width * 0.05)
+	// 	.attr("y", title_position.height * 0.2 )
+	// 	.attr("height", title_position.width / 10)
+	// 	.attr("width", title_position.width * 0.05)
+	// 	.attr("fill", "blue")
+	// 	.attr("rx", title_position.width * 0.05 / 2)
+
 	this.title.append("text")
-		.attr("x", title_position.width / 2)
-		.attr("y", title_position.height * 0.8 )
+		.attr("x", title_position.width /2)
+		.attr("y", title_position.height * 0.2 )
+		.attr("dominant-baseline", "hanging")
 		.style("font-size", title_position.width / 10)
 		.attr("text-anchor", "middle")
 		.text("数据选择")
@@ -95,6 +104,8 @@ DataPanel.prototype.load_time = function(){
     	.domain([0, data_item_number])
     	.range([0, width])
 
+    this.red_color = "#DE5E5B"
+    this.gray_color = "#EBECEF"
 
 
 
@@ -122,7 +133,7 @@ DataPanel.prototype.load_time = function(){
 		.attr("height", d => (Math.max(y_scale(1) - y_scale(d), 0)))
 		.attr("y", d => y_scale(d + 0.1))
 		.attr("x", (d,i) => x_scale(i))
-		.attr("fill", "#ccebc5")
+		.attr("fill", this.gray_color)
 		.attr("width", width / data_item_number)
 
 	this.accu_path = this.time.append("path")
@@ -132,7 +143,7 @@ DataPanel.prototype.load_time = function(){
 	    .attr("d", line) // 11. Calls the line generator 
 	    .attr("fill-opacity", 0)
 	    .attr("stroke-width", 2)
-	    .attr("stroke", "#b3cde3");
+	    .attr("stroke", this.red_color);
 
 	this.time.append('g')
 		.attr("class", "y-axis")
@@ -204,8 +215,8 @@ DataPanel.prototype.load_time = function(){
 				.attr("y", y_scale(this_data + 0.1))
 
 			panel.new_rect.selectAll(".new_rect")
-				.attr("fill", "#ccebc5")
-			this_rect.attr("fill", "#fc9272")
+				.attr("fill", panel.gray_color)
+			this_rect.attr("fill", panel.red_color)
 
 
 			// console.log(panel.accu_data[this_date_index])
@@ -337,6 +348,7 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 	let svg = this.svg
 	let position = this.area_position
 	let provinces = this.provinces
+	let skip = 10
 
 	// console.log(places)
 	let width = position.width
@@ -345,7 +357,7 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 	let place_is_choose = this.place_is_choose
 	let top = position.top
 	let button_width = width / column_max
-	let button_height = height / (Math.ceil(places.length / column_max))
+	let button_height = (height - skip) / (Math.ceil(places.length / column_max))
 	let button_margin = {left: button_width * 0.1, right: button_width * 0.1, top: button_height * 0.1 , bottom:  button_height * 0.1};
 	
 
@@ -355,6 +367,15 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 		.attr("transform", function(d){
 			return "translate(" + left + "," + top + ")"
 		})
+
+	this.area.append("g")
+		.append("line")
+		.attr("x1", 0)
+		.attr("x2", width)
+		.attr("y1", button_height + skip / 2)
+		.attr("y2", button_height + skip / 2)
+		.attr("stroke", "#ddd")
+		.attr("stroke-width", 2)
 
 	// this.area.append("rect")
 	// 	.attr("fill", "blue")
@@ -369,7 +390,12 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 		.attr("transform", function(d, i){
 			row = parseInt(i / column_max)
 			col = i - row * column_max
-			return "translate(" + col * button_width + "," + row * button_height + ")"
+			if (row === 0){
+				return "translate(" + col * button_width + "," + row * button_height + ")"
+			}
+			else{
+				return "translate(" + col * button_width + "," + (row * button_height + skip) + ")"
+			}
 		})
 
 	let province_button = this.province_button
@@ -379,7 +405,7 @@ DataPanel.prototype.load_range = function(places, column_max = 3){
 		.attr("height", button_height - button_margin.top - button_margin.bottom)
 		.attr("x", button_margin.left)
 		.attr("y", button_margin.top)
-		.attr("rx", button_margin.left)
+		// .attr("rx", button_margin.left)
 
 	this.province_button.append("text")
 		.text(d => d)
