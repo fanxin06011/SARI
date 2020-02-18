@@ -16,7 +16,7 @@ function Line(Observer){
 	var lineType = "line_abs";
 	var dataAll=[];
 	var colorArr={"Susceptible":"#699AD0","Exposed":"#F6C243","Infectious":"#DF8244","Recovered":"#7EAB54"};
-	var keysMap={"Susceptible":"疑似","Exposed":"潜伏","Infectious":"感染","Recovered":"康复"};
+	var keysMap={"Susceptible":"健康","Exposed":"潜伏","Infectious":"感染","Recovered":"康复"};
 
 	var svg=d3.select("#line-div")
 			.append("svg")
@@ -92,7 +92,8 @@ function Line(Observer){
 			.attr("class", "y axis")
 			.attr("transform", "translate(" + (padding.left) + ",0)")
 			.call(y_axis);	
-
+		
+		// 标签说明
 		var legend = lineg.append("g").attr("class", "labeltext")
 			.selectAll("g")
 			.data(keys)
@@ -107,6 +108,18 @@ function Line(Observer){
 			.attr("x", function(d,i){return 10;})
 			.attr("y", 12.5)
 			.text(function(d,i) {;return keysMap[d]; });
+		
+		// 打点
+		for(var k=0;k<values.length;k++){
+			svg.append("g").attr("class","circleg")
+				.selectAll("circle")
+				.data(values[k])
+				.enter().append("circle")
+				.attr("cx",function(d,i) { return x_scale(new Date(timeStart + (true_data["time"]["left"]+i)*24*60*60*1000)); })
+				.attr("cy",function(d) { return y_scale(d); })
+				.attr("r",2)
+				.style("fill", colorArr[keys[k]]);
+		}
 		
 		// 每天新增 柱状图
 		var new_data=true_data["diagnosed_new"].slice(true_data["time"]["left"],true_data["time"]["right"]+1);

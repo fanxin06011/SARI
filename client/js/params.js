@@ -30,7 +30,7 @@ function Params(Observer){
 			}
 		})
 		$(".modelImage").map(function(){$(this).height(imgHeight);})
-		$("#left-top-div").height(imgHeight+173);
+		$("#left-top-div").height(imgHeight+243);
 
 		// 隐藏除了默认模块之外的其他模块的图示
 		$(".modelImage").hide();
