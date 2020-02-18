@@ -469,6 +469,9 @@ DataPanel.prototype.send_message = function(){
 		diagnosed_accu: this.get_data(this.data.accu),
 		cure_accu: this.get_data(this.data.cure.accu),
 		dead_accu: this.get_data(this.data.dead.accu),
+		diagnosed_new: this.get_data(this.data.new),
+		cure_new: this.get_data(this.data.cure.new),
+		dead_new: this.get_data(this.data.dead.new),
 		original_data: this.data
 		// data: this.data,
 	}
