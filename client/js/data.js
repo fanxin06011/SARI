@@ -3,6 +3,11 @@ let get_modify_data = function(data){
   // accumulate_data_liucan()
   // console.log("old", ncov_data)
   let data_contain = convert_data_liucan(data, "全国")
+  let data_contain_cure = convert_data_liucan(data, "全国", "治愈")
+  let data_contain_dead = convert_data_liucan(data, "全国", "死亡")
+  console.log(data_contain)
+  console.log(data_contain_cure)
+  console.log(data_contain_dead)
   let ncov_data_new = data_contain.table_data;
   let minus_ncov_data = data_contain.minus_table_data;
   let begin_date = data_contain.begin_date;
@@ -12,7 +17,20 @@ let get_modify_data = function(data){
   ncov_data_new = modify_data_liucan(ncov_data_new);
   ncov_data_accu = modify_data_liucan(ncov_data_accu);
   minus_ncov_data = modify_data_liucan(minus_ncov_data);
-  return {new: ncov_data_new, minus: minus_ncov_data, accu: ncov_data_accu, begin:begin_date}
+  data_contain_cure.ncov_data_accu_cure = accumulate_data_liucan(data_contain_cure.table_data, data_contain_cure.minus_table_data)
+  data_contain_dead.ncov_data_accu_dead = accumulate_data_liucan(data_contain_dead.table_data, data_contain_dead.minus_table_data)
+  let cure = new Array()
+  let dead = new Array()
+  cure.new = modify_data_liucan(data_contain_cure.table_data)
+  cure.minus = modify_data_liucan(data_contain_cure.minus_table_data)
+  cure.accu = modify_data_liucan(data_contain_cure.ncov_data_accu_cure)
+
+  dead.new = modify_data_liucan(data_contain_dead.table_data)
+  dead.minus = modify_data_liucan(data_contain_dead.minus_table_data)
+  dead.accu = modify_data_liucan(data_contain_dead.ncov_data_accu_dead)
+
+
+  return {new: ncov_data_new, minus: minus_ncov_data, accu: ncov_data_accu, begin:begin_date, dead: dead, cure: cure}
 }
 let modify_data_liucan = function(data){
   let new_data = new Array();
@@ -45,7 +63,20 @@ let accumulate_data_liucan = function(ncov_data_input, ncov_data_minus)
   // return ncov_data_tmp
 }
 
-let convert_data_liucan  = function(data, simple_province_name){
+let convert_data_liucan  = function(data, simple_province_name, type = "确诊"){
+    let new_add_name = "新增确诊病例"
+    let new_minus_name = "核减"
+
+    if (type === "死亡"){
+      new_add_name = "新增死亡数"
+      new_minus_name = "死亡核减"
+    }
+    if (type === "治愈"){
+      new_add_name = "新增治愈出院数"
+      new_minus_name = "治愈核减"
+    }
+
+
     let cities = ["新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "湖北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
     let provinces = cities
     // console.log(data)
@@ -71,7 +102,7 @@ let convert_data_liucan  = function(data, simple_province_name){
       else {
         if (current_item["类别"] === "省级" && current_item["省份"] === simple_province_name){
           city_name = "total"
-          if (current_item["新增确诊病例"] === "")
+          if (current_item[new_add_name] === "")
             continue
         }
         else if (current_item["类别"] != "地区级")
@@ -89,10 +120,10 @@ let convert_data_liucan  = function(data, simple_province_name){
       if (!minus_data.hasOwnProperty(city_name))
         minus_data[city_name] = new Array()
 
-      let new_add = current_item["新增确诊病例"]
+      let new_add = current_item[new_add_name]
       new_add = parse_to_int_liucan(new_add)
 
-      let new_minus = current_item["核减"]
+      let new_minus = current_item[new_minus_name]
       new_minus = parse_to_int_liucan(new_minus)
       // if (new_minus !== 0)
       //   console.log(city_name+ current_item["公开时间"] +  " 核减 " + new_minus )
@@ -262,7 +293,7 @@ function get_day_liucan(i, begin_date)
 
 function get_day_en(i, begin_date)
 {
-  let date = i + begin_date - 1
+  let date = i + begin_date 
   if (date > 31)
   {
     return "Feb. " + (date - 31) 

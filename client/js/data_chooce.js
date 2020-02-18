@@ -1,4 +1,5 @@
 let DataPanel = function(data, provinces){
+	this.is_log = true
 	this.data = data;
 	this.provinces = provinces
 	this.place_is_choose = new Array();
@@ -68,7 +69,7 @@ DataPanel.prototype.load_time = function(){
 
 	let line = d3.line()
 		.x(function(d, i) { return width * i / data_item_number; }) // set the x values for the line generator
-		.y(function(d) { return y_scale(d); }) // set the y values for the line generator 
+		.y(function(d) { return y_scale(d + 0.1); }) // set the y values for the line generator 
 		.curve(d3.curveMonotoneX) // apply smoothing to the line
 
 	let new_data = this.get_data(this.data.new)
@@ -79,13 +80,22 @@ DataPanel.prototype.load_time = function(){
 	// console.log(accu_data)
 
 
-	this.y_scale = d3.scaleLinear()
-    	.domain([0, Math.max(...accu_data)])
-    	.range([height, 0]);
+	// this.y_scale = d3.scaleLinear()
+ //    	.domain([0, Math.max(...accu_data)])
+ //    	.range([height, 0]);
+
+
+	this.y_scale = d3.scaleLog()
+		.domain([1, Math.max(...accu_data)])
+		.range([height, 0]);
+
+
 
     this.x_scale = d3.scaleLinear()
     	.domain([0, data_item_number])
     	.range([0, width])
+
+
 
 
 
@@ -108,8 +118,9 @@ DataPanel.prototype.load_time = function(){
 		.enter()
 		.append("rect")
 		.attr("class", "new_rect")
-		.attr("height", d => (y_scale(0) - y_scale(d)))
-		.attr("y", d => y_scale(d))
+		.attr("id", (d, i) => "new_" + i)
+		.attr("height", d => (Math.max(y_scale(1) - y_scale(d), 0)))
+		.attr("y", d => y_scale(d + 0.1))
 		.attr("x", (d,i) => x_scale(i))
 		.attr("fill", "#ccebc5")
 		.attr("width", width / data_item_number)
@@ -125,7 +136,7 @@ DataPanel.prototype.load_time = function(){
 
 	this.time.append('g')
 		.attr("class", "y-axis")
-		.call(d3.axisRight(y_scale)); // Create an axis component with d3.axisLeft
+		.call(d3.axisRight(y_scale).tickArguments([5,".0s"])); // Create an axis component with d3.axisLeft
 
 	let panel = this
 	var brush = d3.brushX()
@@ -148,6 +159,9 @@ DataPanel.prototype.load_time = function(){
 			// panel.send_message()
 	    })
 	    .on("end", function(d){
+	    	console.log(d3.event)
+	    	if (d3.event.selection === null)
+	    		return
 	    	let selection = d3.event.selection
 			let left_date = Math.floor(x_scale.invert(selection[0]))
 			let right_date = Math.floor(x_scale.invert(selection[1]))
@@ -168,6 +182,44 @@ DataPanel.prototype.load_time = function(){
 	this.time.append("g")
 		.attr("class", "brush")
 		.call(brush)
+		.on("mousemove", function(d){
+			// console.log(d3.mouse(this))
+			let this_date_index = Math.floor(x_scale.invert(d3.mouse(this)[0]))
+			// console.log(this_date_index, get_day_en(this_date_index))
+			panel.select_date_text
+				.text(get_day_en(this_date_index, panel.data.begin))
+				.attr("x", x_scale(this_date_index))
+
+
+
+			// console.log(this_date_index)
+			let this_rect = panel.svg.select("#new_" + this_date_index)
+			let this_data = this_rect.datum()
+			// let this_date = get_day_en()
+			// console.log(this_data)
+
+			panel.select_info_text
+				.text(this_data)
+				.attr("x", x_scale(this_date_index))
+				.attr("y", y_scale(this_data + 0.1))
+
+			panel.new_rect.selectAll(".new_rect")
+				.attr("fill", "#ccebc5")
+			this_rect.attr("fill", "#fc9272")
+
+
+			// console.log(panel.accu_data[this_date_index])
+
+			panel.select_accu_text
+				.text(panel.accu_data[this_date_index])
+				.attr("x", x_scale(this_date_index))
+				.attr("y", y_scale(panel.accu_data[this_date_index] + 0.1))
+
+			// console.log()
+
+			// console.log("position", d3.event.offsetX, d3.event.offsetY)
+
+		})
 
 	let show_date = this.time.append("g")
 		.attr("id", "show_date")
@@ -186,8 +238,32 @@ DataPanel.prototype.load_time = function(){
 		.attr("dominant-baseline", "hanging")
 		.attr("text-anchor", "middle")
 
+	select_date_text = show_date.append("text")
+		.attr("class", "select_date")
+		// .attr("x", width)
+		.attr("dominant-baseline", "hanging")
+		.attr("text-anchor", "middle")
+
+	select_info_text = this.time.append("g")
+		.append("text")
+		.attr("class", "select_info")
+		// .attr("x", width)
+		// .attr("dominant-baseline", "hanging")
+		.attr("text-anchor", "middle")
+
+	select_accu_text = this.time.append("g")
+		.append("text")
+		.attr("class", "select_accu")
+		// .attr("x", width)
+		// .attr("dominant-baseline", "hanging")
+		.attr("text-anchor", "middle")
+
+
 	this.left_date_text = left_date_text
 	this.right_date_text = right_date_text
+	this.select_date_text = select_date_text
+	this.select_info_text = select_info_text
+	this.select_accu_text = select_accu_text
 
 	
 }
@@ -199,31 +275,43 @@ DataPanel.prototype.reload_time = function(){
 
 	let line = d3.line()
 		.x(function(d, i) { return x_scale(i); }) // set the x values for the line generator
-		.y(function(d) { return y_scale(d); }) // set the y values for the line generator 
+		.y(function(d) { return y_scale(d + 0.1); }) // set the y values for the line generator 
 		.curve(d3.curveMonotoneX) // apply smoothing to the line
 
 	console.log(new_data)
 	console.log(accu_data)
 	this.new_data = new_data
 	this.accu_data = accu_data
-	this.y_scale = d3.scaleLinear()
-    	.domain([0, Math.max(...accu_data)])
+
+
+	this.y_scale = d3.scaleLog()
+    	.domain([1, Math.max(...accu_data)])
     	.range([height, 0]);
+
+    // if 
     let x_scale = this.x_scale
     let y_scale = this.y_scale
 
     console.log("???",this)
 
     d3.select(".y-axis")
-    	.call(d3.axisRight(this.y_scale))
+    	.call(d3.axisRight(this.y_scale).tickArguments([5,".0s"]))
 
     this.accu_path
     	.datum(accu_data)
     	.attr("d", line)
 
     this.new_rect.selectAll(".new_rect")
-    	.attr("height", (d,i) => (y_scale(0) - y_scale(new_data[i])))
-		.attr("y", (d,i) => y_scale(new_data[i]))
+    	.datum(new_data[i])
+    	.attr("height", (d,i) => (y_scale(1) - y_scale(new_data[i])))
+		.attr("y", function(d,i){
+			console.log(new_data[i] + 0.1)
+			return y_scale(new_data[i] + 0.1)
+
+		})
+	this.select_info_text.text("")
+	this.select_date_text.text("")
+	this.select_accu_text.text("")
 
 }
 
@@ -378,8 +466,7 @@ DataPanel.prototype.send_message = function(){
 	let send_data = {
 		time: this.date_range,
 		area: this.place_is_choose,
-		new_data: this.new_data,
-		accu_data: this.accu_data
+		data: this.data,
 	}
 	let event_name = "update_data_range"
 	obs.fireEvent(event_name, send_data, this)
@@ -393,7 +480,7 @@ let NCPdata = function(){
   d3.csv(url, function(error, original_data){
   		let places = ["全国", "仅湖北", "除湖北", "新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "湖北", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
 		let provinces = ["新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "湖北", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
-		// console.log(original_data)
+		console.log(original_data)
 		data = get_modify_data(original_data)
 		window._data = data
 		// console.log(data)
