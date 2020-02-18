@@ -51,9 +51,10 @@
 						  <option value="2"><span>SIJR</span></option>
 						</select>
 					</td>
+					<td></td>
 				</tr>
 				<tr>
-					<td colspan="2" >
+					<td colspan="3" >
 						<div class="modelImage" id="modelImage0">
 							<img src="./image/SIR.jpg"/>
 						</div>
@@ -66,7 +67,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 感染率 &#946;:</span></td>
+					<td><span>&nbsp; &nbsp; 感染率 &#946;:&nbsp; &nbsp; </span></td>
+					<td id="cur_infectRate">0.9</td>
 					<td>
 						<input  id="infectRate" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
@@ -74,7 +76,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 康复率 &#947;:</span></td>
+					<td><span>&nbsp; &nbsp; 康复率 &#947;:&nbsp; &nbsp; </span></td>
+					<td id="cur_recoverRate">0.2</td>
 					<td>
 						<input  id="recoverRate" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
@@ -82,7 +85,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 发病率 &#963;:</span></td>
+					<td><span>&nbsp; &nbsp; 发病率 &#963;:&nbsp; &nbsp; </span></td>
+					<td id="cur_sigma">0.05</td>
 					<td>
 						<input  id="sigma" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
@@ -90,7 +94,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始健康数 S_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始健康数 S_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initSusceptibleNum">10</td>
 					<td>
 						<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
@@ -98,7 +103,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始感染数 I_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始感染数 I_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initInfectedNum">3</td>
 					<td>
 						<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
@@ -106,7 +112,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始潜伏数 E_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始潜伏数 E_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initIncubatedNum">1</td>
 					<td>
 						<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
@@ -114,7 +121,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始康复数 R_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始康复数 R_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initRecoverNum">0</td>
 					<td>
 						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"  
 							data-slider-min="0" data-slider-max="100" data-slider-step="1"  

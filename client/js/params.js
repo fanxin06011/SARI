@@ -1,66 +1,61 @@
 function Params(Observer){
 	var params={};
 	var duration=50;
-	
+	var true_data;
+	var timeOutFunction =null;
 
-	$('#infectRate').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#recoverRate').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#sigma').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#initSusceptibleNum').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#initInfectedNum').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		initInfectedNum=e.value.newValue;
-		params.getdata();
-	});
-	$('#initIncubatedNum').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
-	$('#initRecoverNum').slider({formatter: function (value) {return 'Current value: ' + value;  }})
-	.on('change', function (e) {  
-		params.getdata();
-	});
+	var paramsIdArr=["infectRate","recoverRate","sigma","initSusceptibleNum","initInfectedNum","initIncubatedNum","initRecoverNum"];
 
-	var modelUsed=parseInt(document.getElementById("modelUsed").value);
-	console.log("newtype "+modelUsed);
-	$(".modelImage").hide();
-	$("#modelImage"+modelUsed).show();
-	$("#modelUsed").change(function(){
-		var newtype=parseInt(document.getElementById("modelUsed").value);
-		console.log("aaa "+newtype);
-		if(modelUsed!=newtype){
-			modelUsed=newtype;
-			console.log("newtype "+modelUsed);
-			$(".modelImage").hide();
-			$("#modelImage"+modelUsed).show();
-		}
-	});
+	for(var i=0;i<paramsIdArr.length;i++){
+		$('#'+paramsIdArr[i]).slider({formatter: function (value) {return 'Current value: ' + value;  }})
+		.on('change', function (e) {  
+			$("#cur_"+paramsIdArr[i]).text(parseFloat($('#'+paramsIdArr[i]).val()));
+			window.clearTimeout(timeOutFunction);
+			timeOutFunction = setTimeout(function () {
+				params.getdata();
+			},500);
+		});
+	}
 
-	params.getdata=function(true_data){
+	var modelUsed=parseInt(document.getElementById("modelUsed").value);	
+
+	// 获取模型图片高度最大值
+	// 模型的结构的图示要占一个固定的空间
+	$(document).ready(function () {
+		var imgHeight=0;
+		$(".modelImage").map(function(){
+			console.log($(this).height());
+			if($(this).height()>imgHeight){
+				imgHeight=$(this).height();
+			}
+		})
+		$(".modelImage").map(function(){$(this).height(imgHeight);})
+		$("#left-top-div").height(imgHeight+173);
+
+		// 隐藏除了默认模块之外的其他模块的图示
+		$(".modelImage").hide();
+		$("#modelImage"+modelUsed).show();
+		$("#modelUsed").change(function(){
+			var newtype=parseInt(document.getElementById("modelUsed").value);
+			if(modelUsed!=newtype){
+				modelUsed=newtype;
+				$(".modelImage").hide();
+				$("#modelImage"+modelUsed).show();
+			}
+		});
+
+		$(".slider.slider-horizontal").width($("#left-top-div").width()-190)
+	})
+
+	params.getdata=function(){
 		let obj = {};
 		obj.type=parseInt(document.getElementById("modelUsed").value);
-		obj.params=JSON.stringify({
-			'infectRate':parseFloat($('#infectRate').val()),
-			'recoverRate':parseFloat($('#recoverRate').val()),
-			'sigma':parseFloat($('#sigma').val()),
-			'initSusceptibleNum':parseInt($('#initSusceptibleNum').val()),
-			'initInfectedNum':parseInt($('#initInfectedNum').val()),
-			'initIncubatedNum':parseInt($('#initIncubatedNum').val()),
-			'initRecoverNum':parseInt($('#initRecoverNum').val()),
-			'duration':duration,
-		});
+		let tmpparam={};
+		for(var i=0;i<paramsIdArr.length;i++){
+			tmpparam[paramsIdArr[i]]=parseFloat($('#'+paramsIdArr[i]).val())
+		}
+		tmpparam['duration']=duration;
+		obj.params=JSON.stringify(tmpparam);
 		console.log(obj);
 		$.ajax({
 			type: 'GET',
@@ -90,7 +85,8 @@ function Params(Observer){
 			// data.new 每日新增的数组，从第0天到最后一天。
 			// data.accu 每日的累加数组，从第0天到最后一天。
 			duration=data.time["right"]-data.time["left"];
-			params.getdata(data);
+			true_data=data;
+			params.getdata();
 		}
 	}
 	
