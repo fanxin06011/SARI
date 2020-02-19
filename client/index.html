@@ -14,10 +14,10 @@
 	<link href="./css/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="./css/bootstrap-slider.css">
 	<link rel="stylesheet" type="text/css" href="css/panel_liucan.css">
-	
-	
-	
-	
+
+
+
+
     <!-- js library -->
     <script src="jslib/jquery.min.js"></script>
     <script src="jslib/bootstrap-slider.min.js"></script>
@@ -29,12 +29,12 @@
     <script src="jslib/d3tip.js"></script>
 	<script src="jslib/bootstrap-switch.js"></script>
 	<script src="jslib/spin.min.js"></script>
-	
+
     <script src="jslib/jquery.contextMenu.js" type="text/javascript"></script>
     <!-- css -->
     <link rel="stylesheet" href="./css/main.css">
 </head>
-    
+
 
 <body>
 
@@ -51,9 +51,10 @@
 						  <option value="2"><span>SIJR</span></option>
 						</select>
 					</td>
+					<td></td>
 				</tr>
 				<tr>
-					<td colspan="2" >
+					<td colspan="3" >
 						<div class="modelImage" id="modelImage0">
 							<img src="./image/SIR.jpg"/>
 						</div>
@@ -66,74 +67,85 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 感染率 &#946;:</span></td>
+					<td><span>&nbsp; &nbsp; 感染率 &#946;:&nbsp; &nbsp; </span></td>
+					<td id="cur_infectRate">0.9</td>
 					<td>
-						<input  id="infectRate" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
+						<input  id="infectRate" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
 							data-slider-value="0.9"/>
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 康复率 &#947;:</span></td>
+					<td><span>&nbsp; &nbsp; 康复率 &#947;:&nbsp; &nbsp; </span></td>
+					<td id="cur_recoverRate">0.2</td>
 					<td>
-						<input  id="recoverRate" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-							data-slider-value="0.2"/> 
+						<input  id="recoverRate" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
+							data-slider-value="0.2"/>
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 发病率 &#963;:</span></td>
+					<td><span>&nbsp; &nbsp; 发病率 &#963;:&nbsp; &nbsp; </span></td>
+					<td id="cur_sigma">0.05</td>
 					<td>
-						<input  id="sigma" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"  
-							data-slider-value="0.05"/> 
+						<input  id="sigma" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
+							data-slider-value="0.05"/>
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始健康数 S_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始健康数 S_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initSusceptibleNum">10</td>
 					<td>
-						<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="10"/> 
+						<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
+							data-slider-value="10000"/>
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始感染数 I_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始感染数 I_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initInfectedNum">3</td>
 					<td>
-						<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="3"/> 
+						<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
+							data-slider-value="3"/>
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始潜伏数 E_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始潜伏数 E_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initIncubatedNum">1</td>
 					<td>
-						<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="1"/> 
+						<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="100" data-slider-step="1"
+							data-slider-value="1"/>
 					</td>
 				</tr>
 				<tr>
-					<td><span>&nbsp; &nbsp; 初始康复数 R_0:</span></td>
+					<td><span>&nbsp; &nbsp; 初始康复数 R_0:&nbsp; &nbsp; </span></td>
+					<td id="cur_initRecoverNum">0</td>
 					<td>
-						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"  
-							data-slider-min="0" data-slider-max="100" data-slider-step="1"  
-							data-slider-value="0"/> 
+						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
+							data-slider-value="0"/>
 					</td>
 				</tr>
 			</table>
 		</div>
-		
+
 		<div id="left-bottom-div" class="outer-div">
-			
+
 		</div>
 	</div>
 	<div id="middle-div" class="outer-div">
-		
+
 	</div>
 	<div id="right-div" class="outer-div">
+		<div id="line-selector">
+			&nbsp;&nbsp;<input type="radio" name="line" id="line_abs" checked>&nbsp;&nbsp;<span>绝对值</span>
+			<input type="radio" name="line" id="line_per" >&nbsp;&nbsp;<span>百分比</span>
+		</div>
 		<div id="line-div">
-		
+
 		</div>
 	</div>
 </div>
