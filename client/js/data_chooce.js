@@ -502,6 +502,7 @@ DataPanel.prototype.send_message = function(){
 		// data: this.data,
 	}
 	let event_name = "update_data_range"
+	console.log(send_data)
 	obs.fireEvent(event_name, send_data, this)
 }
 
