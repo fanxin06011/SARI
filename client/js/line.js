@@ -15,8 +15,8 @@ function Line(Observer){
 	var timeStart = 1578585600000;
 	var lineType = "line_abs";
 	var dataAll=[];
-	var colorArr={"Susceptible":"#699AD0","Exposed":"#F6C243","Infectious":"#DF8244","Recovered":"#7EAB54"};
-	var keysMap={"Susceptible":"健康","Exposed":"潜伏","Infectious":"感染","Recovered":"康复"};
+	var colorArr={"Susceptible":"#4095F7","Exposed":"#D7D599","Infectious":"#DE5E5B","Recovered":"#18BABD"};
+	var keysMap={"Susceptible":"健康","Exposed":"潜伏","Infectious":"感染","Recovered":"治愈"};
 
 	var svg=d3.select("#line-div")
 			.append("svg")

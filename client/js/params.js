@@ -85,8 +85,9 @@ function Params(Observer){
 			console.log(data.diagnosed_accu[data.time.left]);
 			console.log(data.dead_accu[data.time.left] + data.cure_accu[data.time.left]);
 			$('#initInfectedNum').slider('setValue', data.diagnosed_accu[data.time.left]);
+			$("#cur_initInfectedNum").text(parseFloat($('#initInfectedNum').val()));
 			$('#initRecoverNum').slider('setValue', data.dead_accu[data.time.left] + data.cure_accu[data.time.left]);
-
+			$("#cur_initRecoverNum").text(parseFloat($('#initRecoverNum').val()));
 
 			params.getdata();
 		}
