@@ -17,3 +17,28 @@
 .province_button text{
 	fill: #606060;
 }
+
+.province-container rect.bound{
+	fill: white;
+	stroke-width: 1px;
+	stroke: black;
+}
+
+.province-container rect.selection{
+	fill: white;
+	stroke: none;
+	transition-duration: 0.4s;
+	cursor: pointer;
+}
+
+.province-container rect.selection:hover{
+	fill: gray;
+}
+
+.province-container text{
+	fill: #606060
+}
+
+text{
+	cursor: pointer;
+}
