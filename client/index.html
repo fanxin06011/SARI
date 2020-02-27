@@ -71,7 +71,7 @@
 					<td><span>&nbsp; &nbsp; 感染率 &#946;:&nbsp; &nbsp; </span></td>
 					<td id="cur_infectRate">0.9</td>
 					<td>
-						<input  id="infectRate" data-slider-id="ex1Slider" type="text"
+						<input id="infectRate" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
 							data-slider-value="0.9"/>
 					</td>
@@ -85,11 +85,20 @@
 							data-slider-value="0.2"/>
 					</td>
 				</tr>
-				<tr>
+				<tr id="tr_sigma">
 					<td><span>&nbsp; &nbsp; 发病率 &#963;:&nbsp; &nbsp; </span></td>
 					<td id="cur_sigma">0.05</td>
 					<td>
-						<input  id="sigma" data-slider-id="ex1Slider" type="text"
+						<input id="sigma" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
+							data-slider-value="0.05"/>
+					</td>
+				</tr>
+				<tr id="tr_delta">
+					<td><span>&nbsp; &nbsp; 死亡率 &#948;:&nbsp; &nbsp; </span></td>
+					<td id="cur_delta">0.05</td>
+					<td>
+						<input id="delta" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
 							data-slider-value="0.05"/>
 					</td>
@@ -112,7 +121,7 @@
 							data-slider-value="3"/>
 					</td>
 				</tr>
-				<tr>
+				<tr id="tr_initIncubatedNum">
 					<td><span>&nbsp; &nbsp; 初始潜伏数 E<sub>0</sub>:&nbsp; &nbsp; </span></td>
 					<td id="cur_initIncubatedNum">1</td>
 					<td>
@@ -126,6 +135,24 @@
 					<td id="cur_initRecoverNum">0</td>
 					<td>
 						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
+							data-slider-value="0"/>
+					</td>
+				</tr>
+				<tr id="tr_initConfirmNum">
+					<td><span>&nbsp; &nbsp; 初始确诊数 J<sub>0</sub>:&nbsp; &nbsp; </span></td>
+					<td id="cur_initConfirmNum">0</td>
+					<td>
+						<input  id="initConfirmNum" data-slider-id="ex1Slider" type="text"
+							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
+							data-slider-value="0"/>
+					</td>
+				</tr>
+				<tr id="tr_initDeadNum">
+					<td><span>&nbsp; &nbsp; 初始死亡数 D<sub>0</sub>:&nbsp; &nbsp; </span></td>
+					<td id="cur_initDeadNum">0</td>
+					<td>
+						<input  id="initDeadNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
 							data-slider-value="0"/>
 					</td>

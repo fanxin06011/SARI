@@ -13,10 +13,10 @@ span,text,button, input, select, textarea{
 .outer-div{
 	background-color: #fff;
 	border-radius: 7px;
-	//border-left: 4px solid #d5d5d5;
+	border-left: 4px solid #d5d5d5;
 	border: 2px solid #d5d5d5;
-
 }
+
 .block-div {
 	height: 100%;
 	border-radius: 7px;
@@ -111,4 +111,14 @@ span,text,button, input, select, textarea{
     width: 15px;
     height: 15px;
 	background-image: linear-gradient(to bottom, #a9a9a9 0%, #777777 100%);
+}
+
+#tr_initDeadNum {
+	display: none;
+}
+#tr_initConfirmNum {
+	display: none;
+}
+#tr_delta {
+	display: none;
 }

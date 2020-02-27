@@ -4,7 +4,7 @@ function Params(Observer){
 	var true_data;
 	var timeOutFunction =null;
 
-	var paramsIdArr=["infectRate","recoverRate","sigma","initSusceptibleNum","initInfectedNum","initIncubatedNum","initRecoverNum"];
+	var paramsIdArr=["infectRate","recoverRate","sigma", "delta", "initSusceptibleNum","initInfectedNum","initIncubatedNum","initRecoverNum", "initConfirmNum", "initDeadNum"];
 
 	for(var i=0;i<paramsIdArr.length;i++){
 		$('#'+paramsIdArr[i]).slider({formatter: function (value) {return 'Current value: ' + value;  }})
@@ -41,9 +41,32 @@ function Params(Observer){
 				modelUsed=newtype;
 				$(".modelImage").hide();
 				$("#modelImage"+modelUsed).show();
+				if(newtype==0){
+					$("#tr_sigma").hide();
+					$("#tr_delta").hide();
+					$("#tr_initIncubatedNum").hide();
+					$("#tr_initConfirmNum").hide();
+					$("#tr_initDeadNum").hide();
+					$("#left-top-div").height(imgHeight+200);
+				}
+				else if(newtype == 1){
+					$("#tr_sigma").show();
+					$("#tr_delta").hide();
+					$("#tr_initIncubatedNum").show();
+					$("#tr_initConfirmNum").hide();
+					$("#tr_initDeadNum").hide();
+					$("#left-top-div").height(imgHeight+243);
+				}
+				else{
+					$("#tr_sigma").show();
+					$("#tr_delta").show();
+					$("#tr_initIncubatedNum").hide();
+					$("#tr_initConfirmNum").show();
+					$("#tr_initDeadNum").show();
+					$("#left-top-div").height(imgHeight+270);
+				}
 			}
 		});
-
 		$(".slider.slider-horizontal").width($("#left-top-div").width()-190)
 	})
 
