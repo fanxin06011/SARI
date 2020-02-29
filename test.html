@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .a{
+            fill: blue;
+        }
+
+        .b{
+            fill: red;
+        }
+    </style>
+
+    <script src="client/jslib/d3.js"></script>
+</head>
+<body>
+
+<svg width="700" height="700">
+    <rect id="rect1" x="100" y="200" width="50" height="50"></rect>
+    <rect id="rect2" x="400" y="400" width="50" height="50"></rect>
+</svg>
+
+<script>
+    d3.select('rect#rect2').on('mouseover', function(){
+        console.log('mouseover');
+        d3.select('rect#rect1').classed('a', true);
+        console.log(d3.select('rect#rect1').attr('class'));
+    });
+    d3.select('rect#rect2').on('mouseout', function(){
+        console.log('mouseout');
+        d3.select('rect#rect1').classed('a', false);
+        console.log(d3.select('rect#rect1').attr('class'));
+    })
+    d3.select('rect#rect2').on('click', function(){
+        console.log('click');
+        d3.selectAll('rect#rect1, rect#rect2').classed('b', true);
+        console.log(d3.select('rect#rect1').attr('class'));
+        console.log('rect2', d3.select('rect#rect2').attr('class'))
+    })
+</script>
+
+</body>
+</html>

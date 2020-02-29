@@ -9,8 +9,8 @@ let DataPanel = function (data, provinces) {
     }
     // this.place_is_choose["山东"] =
     this.place_is_choose["全国"] = true;
-    this.place_is_choose["仅湖北"] = false;
-    this.place_is_choose['除湖北'] = false;
+    // this.place_is_choose["仅湖北"] = false;
+    this.place_is_choose['其它'] = true;
 
     this.margin = {left: 0, right: 0, top: 0, bottom: 0};
     this.width = document.getElementById('middle-div').clientWidth - this.margin.left - this.margin.right,
@@ -343,7 +343,7 @@ DataPanel.prototype.reload_time = function () {
 
 DataPanel.prototype.get_data = function (input_data) {
     let output_data = new Array()
-    console.log(this.data_item_number)
+    // console.log(this.data_item_number)
     for (let i = 0; i < this.data_item_number; i++) {
         output_data[i] = 0
     }
@@ -362,15 +362,27 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
     let svg = this.svg;
     let position = this.area_position;
     let provinces = this.provinces;
-    let skip = 10;
 
-    let other_regions = places.slice(3);
+    let other_regions = places;
 
     let {width, height, left, top} = position;
     let place_is_choose = this.place_is_choose;
 
     let n_others_rows = Math.ceil(other_regions.length / columns_max);
-    let button_height = (height - skip) / (n_others_rows + 3);
+
+    let alpha = 0.3;  // 间隔占button高度的比例
+    let button_height = height / (3 + n_others_rows + alpha * (2 + n_others_rows));
+    let skip = alpha * button_height;
+
+    // let alpha = 0.1;  // 框间隔占框高度的比例
+    // let button_height = height / (3 + 2 * alpha + n_others_rows + n_others_rows * alpha);
+    // let skip = alpha * button_height;
+    //
+    // let inner_padding = {left: width * 0.05, right: width * 0.05};    // 全国框的padding
+    // let inner_width = width - inner_padding.left - inner_padding.right;  // 全国框内有效宽度
+    let inner_width = width - 2 * skip;
+    let inner_inner_width = inner_width - 2 * skip;
+    // let inner_inner_padding = {left: inner_width * 0.05, right: inner_width * 0.05};  // “其它”框padding
 
     this.area = svg.append('g')
         .attr('id', 'range_area')
@@ -379,19 +391,14 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         });
 
     // 全国
-    let all_container = this.area.append('g').attr('class', 'province-container').datum('全国');
+    let all_container = this.area.append('g').attr('class', 'whole-country').datum('全国');
     all_container.append('rect')
-		.attr('class', 'bound')
         .attr('width', width)
         .attr('height', height)
         .attr('x', 0)
-        .attr('y', 0);
-    all_container.append('rect')
-		.attr('class', 'selection')
-		.attr('width', width)
-		.attr('height', button_height)
-		.attr('x', 0)
-		.attr('y', 0);
+        .attr('y', 0)
+        .attr('rx', '2%');
+
     all_container.append('text')
         .attr('x', width / 2)
         .attr('y', button_height / 2)
@@ -399,53 +406,46 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         .attr('dominant-baseline', 'middle')
         .text('全国');
 
-    // 仅湖北
-    let hubei_margin = {left: width * 0.05, right: width * 0.05, top: button_height * 0.1, bottom: button_height * 0.1};
+    // 湖北
     let hubei = this.area.append('g')
-        .attr('class', 'province_button');
+        .attr('class', 'province_button')
+        .datum('湖北');
     hubei.append('rect')
-        .attr('width', width - hubei_margin.left - hubei_margin.right)
-        .attr('height', button_height - hubei_margin.top - hubei_margin.bottom)
-        .attr('x', hubei_margin.left)
-        .attr('y', button_height + hubei_margin.top);
+        .attr('width', inner_width)
+        .attr('height', button_height)
+        .attr('x', skip)
+        .attr('y', button_height)
+        .attr('rx', '1%');
     hubei.append('text')
         .attr('x', width / 2)
         .attr('y', button_height * 1.5)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
-        .text('仅湖北');
+        .text('湖北');
 
     // 其他
-    let other_regions_container_margin = {left: width * 0.05, right: width * 0.05};
     let others_container = this.area.append('g')
-        .attr('class', 'province-container')
-        .attr('transform', `translate(${[0, 2 * button_height]})`).datum('除湖北');
+        .attr('class', 'other-province')
+        .attr('transform', `translate(${[skip, 2 * button_height + skip]})`).datum('其它');
     others_container.append('rect')
-		.attr('class', 'bound')
-        .attr('x', other_regions_container_margin.left)
+        .attr('x', 0)
         .attr('y', 0)
-        .attr('width', width - other_regions_container_margin.left - other_regions_container_margin.right)
-        .attr('height', height - 2 * button_height - skip);
-    others_container.append('rect')
-		.attr('class', 'selection')
-		.attr('x', other_regions_container_margin.left)
-		.attr('y', 0)
-		.attr('width', width - other_regions_container_margin.left - other_regions_container_margin.right)
-		.attr('height', button_height);
+        .attr('rx', '2%')
+        .attr('width', inner_width)
+        .attr('height', height - 2 * button_height - 2 * skip);
     others_container.append('text')
-        .attr('x', width / 2)
+        .attr('x', width / 2 - skip)
         .attr('y', button_height / 2)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
         .text('其他');
 
-    let province_button_width = (width - other_regions_container_margin.left - other_regions_container_margin.right) / columns_max;
+    let province_button_width = inner_inner_width / columns_max;
     let province_button_margin = {
         left: province_button_width * 0.05, right: province_button_width * 0.05,
-        top: button_height * 0.1, bottom: button_height * 0.1
     };
     let other_province = this.area.selectAll('.province_button')
-        .data(['仅湖北'].concat(other_regions))
+        .data(['湖北'].concat(other_regions))
         .enter()
         .append('g')
         .attr('class', 'province_button')
@@ -453,13 +453,15 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         .attr("transform", function (d, i) {
             let row = parseInt((i - 1) / columns_max);
             let col = i - row * columns_max - 1;
-            return "translate(" + (other_regions_container_margin.left + col * province_button_width) + "," + (row * button_height + 3 * button_height) + ")"
+            return "translate(" + (2 * skip + col * province_button_width) + "," +
+                (row * (button_height + skip) + 3 * button_height + skip) + ")";
         });
     other_province.append('rect')
         .attr('x', province_button_margin.left)
-        .attr('y', province_button_margin.top)
+        .attr('y', 0)
+        .attr('rx', '1%')
         .attr('width', province_button_width - province_button_margin.left - province_button_margin.right)
-        .attr('height', button_height - province_button_margin.top - province_button_margin.bottom);
+        .attr('height', button_height);
     other_province.append('text')
         .attr('x', province_button_width / 2)
         .attr('y', button_height / 2)
@@ -471,61 +473,112 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
 
     let panel = this;
     let all_province_groups = this.area.selectAll('.province_button');
-    console.log('palce is choosed', place_is_choose)
     all_province_groups
         .classed('selected_area_button', d => place_is_choose[d])
+        .on('mouseover', function(d){
+            d3.select(this).classed('hover_area_button', true);
+        })
+        .on('mouseout', function(){
+            d3.select(this).classed('hover_area_button', false);
+        })
         .on('click', function (d) {
-        	if (d === "仅湖北") {
-				place_is_choose[d] = true;
-				// place_is_choose["全国"] = false;
-				// place_is_choose["除湖北"] = false;
-				for (let i = 0; i < provinces.length; i++) {
-					place_is_choose[provinces[i]] = false
-				}
-				place_is_choose["湖北"] = true
-			}
-            else {
-            	place_is_choose[d] = !place_is_choose[d];
+            place_is_choose[d] = !place_is_choose[d];
 
-                let only_hubei = true;
-                for (let i = 0; i < provinces.length; i++) {
-                    let current_province = provinces[i];
-                    if (current_province === "湖北") {
-                        if (!place_is_choose[current_province])
-                            only_hubei = false
-                    } else {
-                        if (place_is_choose[current_province])
-                            only_hubei = false
+            let whole_country = true;
+            let other_province = true;
+
+            for (let current_province of provinces){
+                if (current_province === '湖北'){
+                    if (!place_is_choose[current_province]){
+                        whole_country = false;
                     }
                 }
-                place_is_choose["仅湖北"] = only_hubei
-			}
+                // if (!place_is_choose[current_province]){
+                //     whole_country = false;
+                // }
+                else{
+                    if (!place_is_choose[current_province]){
+                        other_province = false;
+                        whole_country = false;
+                    }
+                }
+            }
+
+            place_is_choose["全国"] = whole_country;
+            place_is_choose['其它'] = other_province;
             all_province_groups.classed("selected_area_button", d => place_is_choose[d]);
+            all_container.classed('selected_area_button', d => place_is_choose[d]);
+            others_container.classed('selected_area_button', d => place_is_choose[d]);
             panel.reload_time();
             panel.send_message();
         });
 
-    this.area.selectAll('.province-container')
-		.select('rect.selection')
-        .on('click', function (d) {
-			if (d === "全国") {
-				for (let i = 0; i < provinces.length; i++) {
-					place_is_choose[provinces[i]] = true
-				}
-				place_is_choose["仅湖北"] = false;
-			} else if (d === "除湖北") {
-				for (let i = 0; i < provinces.length; i++) {
-					place_is_choose[provinces[i]] = true
-				}
-				place_is_choose["湖北"] = false;
-				place_is_choose["仅湖北"] = false;
-			}
-			console.log('container', d);
-			all_province_groups.classed("selected_area_button", d => place_is_choose[d]);
+    all_container
+        .classed('selected_area_button', d => place_is_choose[d])
+        .on('mouseover', function(d){
+            all_container.classed('hover_area_button', true);
+            other_province.classed('hover_area_button', true);
+            all_province_groups.classed('hover_area_button', true);
+        })
+        .on('mouseout', function(d){
+            all_container.classed('hover_area_button', false);
+            other_province.classed('hover_area_button', false);
+            all_province_groups.classed('hover_area_button', false);
+        })
+        .on('click', function(d){
+            place_is_choose[d] = !place_is_choose[d];
+
+            for (let current_province of provinces){
+                place_is_choose[current_province] = place_is_choose[d];
+            }
+
+            place_is_choose['其它'] = place_is_choose[d];
+            all_province_groups.classed("selected_area_button", d => place_is_choose[d]);
+            all_container.classed('selected_area_button', d => place_is_choose[d]);
+            others_container.classed('selected_area_button', d => place_is_choose[d]);
+
             panel.reload_time();
             panel.send_message();
-            console.log('click container', d);
-		});
+        });
+
+    others_container
+        .classed('selected_area_button', d => place_is_choose[d])
+        .on('mouseover', function(d){
+            other_province.classed('hover_area_button', true);
+            all_province_groups.classed('hover_area_button', d => d !== '湖北');
+        })
+        .on('mouseout', function(d){
+            other_province.classed('hover_area_button', false);
+            all_province_groups.classed('hover_area_button', false);
+        })
+        .on('click', function(d){
+            place_is_choose[d] = !place_is_choose[d];
+            console.log('???? ',  place_is_choose['湖北'], place_is_choose[d])
+
+            if (place_is_choose[d]){
+                for (let current_province of provinces){
+                    place_is_choose[current_province] = true;
+                }
+                place_is_choose['湖北'] = false;
+                place_is_choose['全国'] = false;
+            }
+            else{
+                for (let current_province of provinces){
+                    if (current_province !== '湖北') {
+                        place_is_choose[current_province] = false;
+                    }
+                }
+                place_is_choose['全国'] = false;
+            }
+
+            console.log('???lciciked and hubei: ', place_is_choose['湖北'])
+            all_province_groups.classed("selected_area_button", d => place_is_choose[d]);
+            all_container.classed('selected_area_button', d => place_is_choose[d]);
+            others_container.classed('selected_area_button', d => place_is_choose[d]);
+            panel.reload_time();
+            panel.send_message();
+        })
+
 };
 
 
@@ -690,9 +743,17 @@ let NCPdata = function () {
     url = "https://tanshaocong.github.io/2019-nCoV/map.csv"
     d3.csv(url, function (error, original_data) {
     	// let special = ["全国", "仅湖北", "除湖北"];
-        let places = ["全国", "仅湖北", "除湖北", "新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "湖北", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
+        let places = ['北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', '江苏',
+            '浙江', '安徽', '福建', '江西', '山东', '河南', '湖南', '广东', '海南', '四川', '贵州', '云南', '陕西', '甘肃', '青海', '台湾',
+            '内蒙古', '广西', '西藏', '宁夏', '新疆', '香港', '澳门'];
+        // let places = ["全国", "仅湖北", "除湖北", "新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "湖北", "云南", "广西", "湖南",
+        //     "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏",
+        //     "海南", "台湾", "北京", "天津", "香港", "澳门"]
         // let places = ["全国", "仅湖北", "除湖北", "新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
-        let provinces = ["新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "湖北", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
+        // let provinces = ["新疆", "西藏", "内蒙古", "青海", "四川", "黑龙江", "甘肃", "湖北", "云南", "广西", "湖南", "陕西", "广东", "吉林", "河北", "贵州", "山东", "江西", "河南", "辽宁", "山西", "安徽", "福建", "浙江", "江苏", "重庆", "宁夏", "海南", "台湾", "北京", "天津", "上海", "香港", "澳门"]
+        let provinces = ['北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', '江苏',
+            '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南', '广东', '海南', '四川', '贵州', '云南', '陕西', '甘肃', '青海', '台湾',
+            '内蒙古', '广西', '西藏', '宁夏', '新疆', '香港', '澳门'];
         console.log(original_data)
         data = get_modify_data(original_data)
         window._data = data

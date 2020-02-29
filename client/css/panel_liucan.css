@@ -1,6 +1,6 @@
 .province_button.selected_area_button rect{
-	fill: #DE5E5B;
-	stroke-width: 0px;
+	fill: #91868c;
+	stroke-width: 0;
 	/*stroke: #444;*/
 }
 
@@ -18,27 +18,35 @@
 	fill: #606060;
 }
 
-.province-container rect.bound{
+.whole-country.selected_area_button rect{
+	stroke-width: 0;
+	fill: #969696;
+}
+
+.other-province.selected_area_button rect{
+	stroke-width: 0;
+	fill: #939393;
+}
+
+.whole-country rect,
+.other-province rect
+{
 	fill: white;
 	stroke-width: 1px;
 	stroke: black;
 }
 
-.province-container rect.selection{
-	fill: white;
-	stroke: none;
-	transition-duration: 0.4s;
-	cursor: pointer;
-}
-
-.province-container rect.selection:hover{
-	fill: gray;
-}
-
-.province-container text{
+.whole-country text,
+.other-province text{
 	fill: #606060
 }
 
-text{
+.hover_area_button rect{
+	stroke-width: 1 !important;
+	stroke: red !important;
+}
+
+
+#range_area text{
 	cursor: pointer;
 }
