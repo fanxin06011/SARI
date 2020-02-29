@@ -393,11 +393,21 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
     // 全国
     let all_container = this.area.append('g').attr('class', 'whole-country').datum('全国');
     all_container.append('rect')
+        .attr('class', 'box')
         .attr('width', width)
         .attr('height', height)
         .attr('x', 0)
         .attr('y', 0)
         .attr('rx', '2%');
+
+    all_container.append('rect')
+        .attr('class', 'selection-rect')
+        .attr('width', width * 0.9)
+        .attr('height', button_height * 0.95)
+        .attr('x', width * 0.05)
+        .attr('y', button_height * 0.05)
+        .style('stroke', 'none')
+        .style('cursor', 'pointer');
 
     all_container.append('text')
         .attr('x', width / 2)
@@ -409,7 +419,8 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
     // 湖北
     let hubei = this.area.append('g')
         .attr('class', 'province_button')
-        .datum('湖北');
+        .datum('湖北')
+        .style('cursor', 'pointer');
     hubei.append('rect')
         .attr('width', inner_width)
         .attr('height', button_height)
@@ -428,17 +439,27 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         .attr('class', 'other-province')
         .attr('transform', `translate(${[skip, 2 * button_height + skip]})`).datum('其它');
     others_container.append('rect')
+        .attr('class', 'box')
         .attr('x', 0)
         .attr('y', 0)
         .attr('rx', '2%')
         .attr('width', inner_width)
         .attr('height', height - 2 * button_height - 2 * skip);
+    others_container.append('rect')
+        .attr('class', 'selection-rect')
+        .attr('width', inner_width * 0.9)
+        .attr('height', button_height * 0.95)
+        .attr('x', inner_width * 0.05)
+        .attr('y', button_height * 0.05)
+        .style('stroke', 'none')
+        .style('cursor', 'pointer');
     others_container.append('text')
         .attr('x', width / 2 - skip)
         .attr('y', button_height / 2)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
         .text('其他');
+
 
     let province_button_width = inner_inner_width / columns_max;
     let province_button_margin = {
@@ -449,7 +470,7 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         .enter()
         .append('g')
         .attr('class', 'province_button')
-        // .classed("selected_area_button", d => place_is_choose[d])
+        .style('cursor', 'pointer')
         .attr("transform", function (d, i) {
             let row = parseInt((i - 1) / columns_max);
             let col = i - row * columns_max - 1;
@@ -514,15 +535,16 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         });
 
     all_container
-        .classed('selected_area_button', d => place_is_choose[d])
+        .classed('selected_area_button', d => place_is_choose[d]);
+    all_container.selectAll('rect.selection-rect, text')
         .on('mouseover', function(d){
             all_container.classed('hover_area_button', true);
-            other_province.classed('hover_area_button', true);
+            others_container.classed('hover_area_button', true);
             all_province_groups.classed('hover_area_button', true);
         })
         .on('mouseout', function(d){
             all_container.classed('hover_area_button', false);
-            other_province.classed('hover_area_button', false);
+            others_container.classed('hover_area_button', false);
             all_province_groups.classed('hover_area_button', false);
         })
         .on('click', function(d){
@@ -541,14 +563,14 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
             panel.send_message();
         });
 
-    others_container
-        .classed('selected_area_button', d => place_is_choose[d])
+    others_container.classed('selected_area_button', d => place_is_choose[d]);
+    others_container.selectAll('rect.selection-rect, text')
         .on('mouseover', function(d){
-            other_province.classed('hover_area_button', true);
+            others_container.classed('hover_area_button', true);
             all_province_groups.classed('hover_area_button', d => d !== '湖北');
         })
         .on('mouseout', function(d){
-            other_province.classed('hover_area_button', false);
+            others_container.classed('hover_area_button', false);
             all_province_groups.classed('hover_area_button', false);
         })
         .on('click', function(d){
