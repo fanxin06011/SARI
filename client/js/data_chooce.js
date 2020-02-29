@@ -145,7 +145,7 @@ DataPanel.prototype.load_time = function () {
         .attr("y", d => y_scale(d + 0.1))
         .attr("x", (d, i) => x_scale(i))
         .attr("fill", this.gray_color)
-        .attr("width", width / data_item_number)
+        .attr("width", width / data_item_number);
 
     this.accu_path = this.time.append("path")
         .datum(accu_data) // 10. Binds data to the line
@@ -160,73 +160,72 @@ DataPanel.prototype.load_time = function () {
         .attr("class", "y-axis")
         .call(d3.axisRight(y_scale).tickArguments([5, ".0s"])); // Create an axis component with d3.axisLeft
 
-    let panel = this
+    let panel = this;
     var brush = d3.brushX()
         .extent([[0, 0], [width, height]])
         .on("brush", function (d) {
-            let selection = d3.event.selection
-            let left_date = Math.floor(x_scale.invert(selection[0]))
-            let right_date = Math.floor(x_scale.invert(selection[1]))
+            let selection = d3.event.selection;
+            let left_date = Math.floor(x_scale.invert(selection[0]));
+            let right_date = Math.floor(x_scale.invert(selection[1]));
             if (right_date >= data_item_number)
-                right_date = data_item_number - 1
-            date_range.left = left_date
-            date_range.right = right_date
+                right_date = data_item_number - 1;
+            date_range.left = left_date;
+            date_range.right = right_date;
 
             left_date_text
                 .text(get_day_en(left_date, data.begin))
-                .attr("x", selection[0])
+                .attr("x", selection[0]);
             right_date_text
                 .text(get_day_en(right_date, data.begin))
                 .attr("x", selection[1])
             // panel.send_message()
         })
         .on("end", function (d) {
-            console.log(d3.event)
             if (d3.event.selection === null)
-                return
-            let selection = d3.event.selection
-            let left_date = Math.floor(x_scale.invert(selection[0]))
-            let right_date = Math.floor(x_scale.invert(selection[1]))
+                return;
+            let selection = d3.event.selection;
+            let left_date = Math.floor(x_scale.invert(selection[0]));
+            let right_date = Math.floor(x_scale.invert(selection[1]));
             if (right_date >= data_item_number)
-                right_date = data_item_number - 1
-            date_range.left = left_date
-            date_range.right = right_date
+                right_date = data_item_number - 1;
+            date_range.left = left_date;
+            date_range.right = right_date;
 
             left_date_text
                 .text(get_day_en(left_date, data.begin))
-                .attr("x", selection[0])
+                .attr("x", selection[0]);
             right_date_text
                 .text(get_day_en(right_date, data.begin))
-                .attr("x", selection[1])
+                .attr("x", selection[1]);
             panel.send_message()
-        })
+        });
 
     this.time.append("g")
         .attr("class", "brush")
         .call(brush)
         .on("mousemove", function (d) {
             // console.log(d3.mouse(this))
-            let this_date_index = Math.floor(x_scale.invert(d3.mouse(this)[0]))
+            let this_date_index = Math.floor(x_scale.invert(d3.mouse(this)[0]));
             // console.log(this_date_index, get_day_en(this_date_index))
             panel.select_date_text
                 .text(get_day_en(this_date_index, panel.data.begin))
-                .attr("x", x_scale(this_date_index))
+                .attr("x", x_scale(this_date_index));
 
 
             // console.log(this_date_index)
-            let this_rect = panel.svg.select("#new_" + this_date_index)
-            let this_data = this_rect.datum()
+            let this_rect = panel.svg.select("#new_" + this_date_index);
+            let this_data = this_rect.datum();
             // let this_date = get_day_en()
             // console.log(this_data)
 
             panel.select_info_text
                 .text(this_data)
                 .attr("x", x_scale(this_date_index))
-                .attr("y", y_scale(this_data + 0.1))
+                .attr("y", y_scale(this_data + 0.1));
 
             panel.new_rect.selectAll(".new_rect")
-                .attr("fill", panel.gray_color)
-            this_rect.attr("fill", panel.red_color)
+                .attr("fill", panel.gray_color);
+            this_rect.attr("fill", panel.red_color);
 
 
             // console.log(panel.accu_data[this_date_index])
@@ -240,59 +239,59 @@ DataPanel.prototype.load_time = function () {
 
             // console.log("position", d3.event.offsetX, d3.event.offsetY)
 
-        })
+        });
 
     let show_date = this.time.append("g")
         .attr("id", "show_date")
-        .attr("transform", "translate(0," + height * 1.02 + ")")
+        .attr("transform", "translate(0," + height * 1.02 + ")");
 
     left_date_text = show_date.append("text")
         .attr("class", "left_date")
         .text(get_day_en(0, this.data.begin))
         .attr("dominant-baseline", "hanging")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "middle");
 
     right_date_text = show_date.append("text")
         .attr("class", "right_date")
         .attr("x", width)
         .text(get_day_en(data_item_number - 1, this.data.begin))
         .attr("dominant-baseline", "hanging")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "middle");
 
     select_date_text = show_date.append("text")
         .attr("class", "select_date")
         // .attr("x", width)
         .attr("dominant-baseline", "hanging")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "middle");
 
     select_info_text = this.time.append("g")
         .append("text")
         .attr("class", "select_info")
         // .attr("x", width)
         // .attr("dominant-baseline", "hanging")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "middle");
 
     select_accu_text = this.time.append("g")
         .append("text")
         .attr("class", "select_accu")
         // .attr("x", width)
         // .attr("dominant-baseline", "hanging")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "middle");
 
 
-    this.left_date_text = left_date_text
-    this.right_date_text = right_date_text
-    this.select_date_text = select_date_text
-    this.select_info_text = select_info_text
+    this.left_date_text = left_date_text;
+    this.right_date_text = right_date_text;
+    this.select_date_text = select_date_text;
+    this.select_info_text = select_info_text;
     this.select_accu_text = select_accu_text
 
 
-}
+};
 
 DataPanel.prototype.reload_time = function () {
-    let height = this.time_position.height
-    let new_data = this.get_data(this.data.new)
-    let accu_data = this.get_data(this.data.accu)
+    let height = this.time_position.height;
+    let new_data = this.get_data(this.data.new);
+    let accu_data = this.get_data(this.data.accu);
 
     let line = d3.line()
         .x(function (d, i) {
@@ -301,12 +300,12 @@ DataPanel.prototype.reload_time = function () {
         .y(function (d) {
             return y_scale(d + 0.1);
         }) // set the y values for the line generator
-        .curve(d3.curveMonotoneX) // apply smoothing to the line
+        .curve(d3.curveMonotoneX); // apply smoothing to the line
 
-    console.log(new_data)
-    console.log(accu_data)
-    this.new_data = new_data
-    this.accu_data = accu_data
+    console.log(new_data);
+    console.log(accu_data);
+    this.new_data = new_data;
+    this.accu_data = accu_data;
 
 
     this.y_scale = d3.scaleLog()
@@ -316,8 +315,6 @@ DataPanel.prototype.reload_time = function () {
     // if 
     let x_scale = this.x_scale
     let y_scale = this.y_scale
-
-    console.log("???", this)
 
     d3.select(".y-axis")
         .call(d3.axisRight(this.y_scale).tickArguments([5, ".0s"]))
@@ -330,25 +327,23 @@ DataPanel.prototype.reload_time = function () {
         .datum(new_data[i])
         .attr("height", (d, i) => (y_scale(1) - y_scale(new_data[i])))
         .attr("y", function (d, i) {
-            console.log(new_data[i] + 0.1)
             return y_scale(new_data[i] + 0.1)
 
         })
     this.select_info_text.text("")
     this.select_date_text.text("")
     this.select_accu_text.text("")
-
 }
 
 
 DataPanel.prototype.get_data = function (input_data) {
-    let output_data = new Array()
+    let output_data = new Array();
     // console.log(this.data_item_number)
     for (let i = 0; i < this.data_item_number; i++) {
         output_data[i] = 0
     }
     for (let p_i = 0; p_i < this.provinces_num; p_i++) {
-        let current_province = this.provinces[p_i]
+        let current_province = this.provinces[p_i];
         if (this.place_is_choose[current_province]) {
             for (let i = 0; i < this.data_item_number; i++)
                 output_data[i] += input_data[current_province][i]
@@ -575,25 +570,30 @@ DataPanel.prototype.load_range1 = function (places, columns_max = 3) {
         })
         .on('click', function(d){
             place_is_choose[d] = !place_is_choose[d];
-            console.log('???? ',  place_is_choose['湖北'], place_is_choose[d])
-
-            if (place_is_choose[d]){
-                for (let current_province of provinces){
-                    place_is_choose[current_province] = true;
+            let whole_country = true;
+            for (let current_province of provinces){
+                if (current_province !== '湖北'){
+                    place_is_choose[current_province] = place_is_choose[d];
                 }
-                place_is_choose['湖北'] = false;
-                place_is_choose['全国'] = false;
-            }
-            else{
-                for (let current_province of provinces){
-                    if (current_province !== '湖北') {
-                        place_is_choose[current_province] = false;
-                    }
+                if (!place_is_choose[current_province]){
+                    whole_country = false;
                 }
-                place_is_choose['全国'] = false;
             }
+            // if (place_is_choose[d]){
+            //     for (let current_province of provinces){
+            //         place_is_choose[current_province] = true;
+            //     }
+            // }
+            // else{
+            //     for (let current_province of provinces){
+            //         if (current_province !== '湖北') {
+            //             place_is_choose[current_province] = false;
+            //         }
+            //     }
+            //     place_is_choose['全国'] = false;
+            // }
 
-            console.log('???lciciked and hubei: ', place_is_choose['湖北'])
+            place_is_choose['全国'] = whole_country;
             all_province_groups.classed("selected_area_button", d => place_is_choose[d]);
             all_container.classed('selected_area_button', d => place_is_choose[d]);
             others_container.classed('selected_area_button', d => place_is_choose[d]);
@@ -735,10 +735,10 @@ DataPanel.prototype.load_range = function (places, column_max = 3) {
 
             }
             province_button.classed("selected_area_button", d => place_is_choose[d])
-            panel.reload_time()
+            panel.reload_time();
             panel.send_message()
         })
-}
+};
 
 DataPanel.prototype.send_message = function () {
     let send_data = {
@@ -752,11 +752,11 @@ DataPanel.prototype.send_message = function () {
         dead_new: this.get_data(this.data.dead.new),
         original_data: this.data
         // data: this.data,
-    }
-    let event_name = "update_data_range"
-    console.log(send_data)
+    };
+    console.log('send data', send_data);
+    let event_name = "update_data_range";
     obs.fireEvent(event_name, send_data, this)
-}
+};
 
 
 // let ncpdata = new NCPdata()
@@ -776,15 +776,15 @@ let NCPdata = function () {
         let provinces = ['北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', '江苏',
             '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南', '广东', '海南', '四川', '贵州', '云南', '陕西', '甘肃', '青海', '台湾',
             '内蒙古', '广西', '西藏', '宁夏', '新疆', '香港', '澳门'];
-        console.log(original_data)
-        data = get_modify_data(original_data)
-        window._data = data
-        console.log('log data', data)
-        panel = new DataPanel(data, provinces)
-        panel.load_title()
-        panel.load_time()
-        panel.load_range1(places)
-        panel.send_message()
+        console.log('original data', original_data);
+        data = get_modify_data(original_data);
+        console.log('modified data: ', data);
+        window._data = data;
+        panel = new DataPanel(data, provinces);
+        panel.load_title();
+        panel.load_time();
+        panel.load_range1(places);
+        panel.send_message();
 
         // // 获得时间范围：
         // console.log(panel.date_range) // 从第一天开始为0.
@@ -794,12 +794,12 @@ let NCPdata = function () {
         // console.log(panel.place_is_choose) // 一个字典，存放着各个省份是否被选中。
 
     })
-}
+};
 
 
 // function update_data_selection(){
 // 	console.log()
 // }
 // console.log(data)
-NCPdata()
+NCPdata();
 

@@ -103,11 +103,11 @@ function Line(Observer){
 			.attr("cx", 0)
 			.attr("cy", 10)
 			.attr("r",5)
-			.attr("fill",function(d,i){return colorArr[d];})
+			.attr("fill",function(d,i){return colorArr[d];});
 		legend.append("text")
 			.attr("x", function(d,i){return 10;})
 			.attr("y", 12.5)
-			.text(function(d,i) {;return keysMap[d]; });
+			.text(function(d,i) {return keysMap[d]; });
 		
 		// 打点
 		for(var k=0;k<values.length;k++){
@@ -166,10 +166,12 @@ function Line(Observer){
     line.onMessage = function(message, data, from){
 		if(message=="showResult"){
 			dataAll=data;
+			console.log('line data before', data);
 			drawLines();
+			console.log('line data after', data);
 		}
 		
-	}
+	};
 	
 	
 	Observer.addView(line);

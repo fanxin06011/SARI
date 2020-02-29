@@ -4,15 +4,16 @@ function Observer() {
 
     observer.addView = function(view) {
         viewList.push(view);
-    }
+    };
     observer.fireEvent = function(message, data, from) {
+        console.log('fire data', data);
         viewList.forEach(function(view) {
             if (view.hasOwnProperty('onMessage')) {
                 view.onMessage(message, data, from);
             }
 
         })
-    }
+    };
     return observer;
 }
 
