@@ -11,12 +11,19 @@ import json
 import os
 
 from SEIR import SEIR_result
+from SIR import SIR_result
+from SIJR import SIJR_result
 
 define("port", default=8663, help="run on the given port", type=int)
 # the path to server html, js, css files
 client_file_root_path = os.path.join(os.path.split(__file__)[0], '../client')
 client_file_root_path = os.path.abspath(client_file_root_path)
 
+def list_add(a, b):
+    c = []
+    for i in range(len(a)):
+        c.append(a[i] + b[i])
+    return c
 
 class SEIR(tornado.web.RequestHandler):
     def get(self):
@@ -24,7 +31,26 @@ class SEIR(tornado.web.RequestHandler):
         params = json.loads(self.get_argument('params'))
         print(type, params)
         evt_unpacked={}
-        if type==1:
+
+        if type == 0:
+            # coefficient of infection
+            beta = params['infectRate']
+            # coefficient of recovery
+            gamma = params['recoverRate']
+            # nb of infectious at the beginning
+            I_0 = params['initInfectedNum']
+            # nb of recovered at the beginning
+            R_0 = params['initRecoverNum']
+            S_0 = params['initSusceptibleNum']
+            N = S_0 + I_0 + R_0
+            # duration
+            T = params['duration']
+            Susceptible, Infectious, Recovered = SIR_result(N, I_0, R_0, beta, gamma, T)
+            evt_unpacked = {'Unknown': Susceptible, 'Infectious': Infectious,
+                            'Recovered': Recovered}
+
+
+        elif type==1:
             # coefficient of infection
             beta = params['infectRate']
             # coefficient of recovery
@@ -43,8 +69,36 @@ class SEIR(tornado.web.RequestHandler):
             # duration
             T = params['duration']
             Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T)
-            evt_unpacked = {'Susceptible': Susceptible, 'Exposed': Exposed, 'Infectious': Infectious,
+            evt_unpacked = {'Unknown': list_add(Susceptible, Exposed), 'Infectious': Infectious,
                             'Recovered': Recovered}
+
+        else:
+            # coefficient of infection
+            beta = params['infectRate']
+            # coefficient of recovery
+            gamma = params['recoverRate']
+            # coefficient from exposed to infectious
+            sigma = params['sigma']
+            mu = params['mu']
+            gamma_1 = params['gamma_1']
+            gamma_2 = params['gamma_2']
+            delta_1 = params['delta_1']
+            delta_2 = params['delta_2']
+
+            # nb of infectious at the beginning
+            I_0 = params['initInfectedNum']
+            # nb of recovered at the beginning
+            R_0 = params['initRecoverNum']
+            S_0 = params['initSusceptibleNum']
+            J_0 = params['initConfirmNum']
+            D_0 = params['initDeadNum']
+            N = S_0 + I_0 + R_0 + J_0 + D_0
+            # duration
+            T = params['duration']
+            Susceptible, Infectious, Diagnosed, Dead, Recovered = SIJR_result(N, I_0, D_0, R_0, J_0, mu, sigma, beta,
+                                                                              gamma_1, gamma_2, delta_1, delta_2, T)
+            evt_unpacked = {'Unknown': list_add(Susceptible, Infectious), 'Infectious': Diagnosed, 'Recovered': list_add(Dead, Recovered)}
+
         evt = json.dumps(evt_unpacked)
         self.write(evt)
 

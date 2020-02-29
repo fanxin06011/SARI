@@ -4,7 +4,7 @@ function Params(Observer){
 	var true_data;
 	var timeOutFunction =null;
 
-	var paramsIdArr=["infectRate","recoverRate","sigma", "delta", "initSusceptibleNum","initInfectedNum","initIncubatedNum","initRecoverNum", "initConfirmNum", "initDeadNum"];
+	var paramsIdArr=["infectRate","recoverRate","gamma_1", "gamma_2", "sigma", "delta", "delta_1", "delta_2", "mu", "initSusceptibleNum","initInfectedNum","initIncubatedNum","initRecoverNum", "initConfirmNum", "initDeadNum"];
 
 	for(var i=0;i<paramsIdArr.length;i++){
 		$('#'+paramsIdArr[i]).slider({formatter: function (value) {return 'Current value: ' + value;  }})
@@ -35,14 +35,24 @@ function Params(Observer){
 		$(".modelImage").hide();
 		$("#modelImage"+modelUsed).show();
 		$("#modelUsed").change(function(){
+			let event_name = "update_data_range";
+	
 			var newtype=parseInt(document.getElementById("modelUsed").value);
+			Observer.fireEvent(event_name, newtype, params);
+
 			if(modelUsed!=newtype){
 				modelUsed=newtype;
 				$(".modelImage").hide();
 				$("#modelImage"+modelUsed).show();
 				if(newtype==0){
 					$("#tr_sigma").hide();
+					$("#tr_recoverRate").show();
+					$("#tr_gamma_1").hide();
+					$("#tr_gamma_2").hide();
 					$("#tr_delta").hide();
+					$("#tr_delta_1").hide();
+					$("#tr_delta_2").hide();
+					$("#tr_mu").hide();
 					$("#tr_initIncubatedNum").hide();
 					$("#tr_initConfirmNum").hide();
 					$("#tr_initDeadNum").hide();
@@ -50,7 +60,13 @@ function Params(Observer){
 				}
 				else if(newtype == 1){
 					$("#tr_sigma").show();
+					$("#tr_recoverRate").show();
 					$("#tr_delta").hide();
+					$("#tr_gamma_1").hide();
+					$("#tr_gamma_2").hide();
+					$("#tr_delta_1").hide();
+					$("#tr_delta_2").hide();
+					$("#tr_mu").hide();
 					$("#tr_initIncubatedNum").show();
 					$("#tr_initConfirmNum").hide();
 					$("#tr_initDeadNum").hide();
@@ -58,11 +74,17 @@ function Params(Observer){
 				}
 				else{
 					$("#tr_sigma").show();
-					$("#tr_delta").show();
+					$("#tr_delta").hide();
+					$("#tr_recoverRate").hide();
+					$("#tr_mu").show();
+					$("#tr_gamma_1").show();
+					$("#tr_gamma_2").show();
+					$("#tr_delta_1").show();
+					$("#tr_delta_2").show();
 					$("#tr_initIncubatedNum").hide();
 					$("#tr_initConfirmNum").show();
 					$("#tr_initDeadNum").show();
-					$("#left-top-div").height(imgHeight+270);
+					$("#left-top-div").height(imgHeight+330);
 				}
 			}
 		});
@@ -70,6 +92,10 @@ function Params(Observer){
 	})
 
 	params.getdata=function(){
+		for(var i=0;i<paramsIdArr.length;i++){
+			$("#cur_"+paramsIdArr[i]).text(parseFloat($('#'+paramsIdArr[i]).val()));
+		}
+
 		let obj = {};
 		obj.type=parseInt(document.getElementById("modelUsed").value);
 		let tmpparam={};
@@ -93,18 +119,125 @@ function Params(Observer){
 	}
 
     params.onMessage = function(message, data, from){
-		if(message=="update_data_range" && from!=params){
-			// data.time 事件范围，从第几天到第几天，数据的第一天为0.
-			// data.area 一个字典，表示各个省份是否被选中，选中为true， 不选中为false
-			// data.new 每日新增的数组，从第0天到最后一天。
-			// data.accu 每日的累加数组，从第0天到最后一天。
-			duration=data.time["right"]-data.time["left"];
-			true_data=data;
+		// if(message=="update_data_range" && from!=params){
+		if(message=="update_data_range"){
+			if(from != params){
+				// data.time 事件范围，从第几天到第几天，数据的第一天为0.
+				// data.area 一个字典，表示各个省份是否被选中，选中为true， 不选中为false
+				// data.new 每日新增的数组，从第0天到最后一天。
+				// data.accu 每日的累加数组，从第0天到最后一天。
+				duration=data.time["right"]-data.time["left"];
+				true_data=data;
+			}
+			else{
+				console.log("change_model");
+			}
+			var area_choose = true_data.area;
+			var areas = Object.keys(area_choose);
+			var true_area = new Array();
+			for(var i = 0; i < areas.length; i++){
+				if(area_choose[areas[i]]){
+					true_area.push(areas[i]);
+				}
+			}
+			
+			var model_type = parseInt(document.getElementById("modelUsed").value);
+			if(model_type == 0){
+				$('#initInfectedNum').slider('setValue', true_data.diagnosed_accu[true_data.time.left]);
+				$("#cur_initInfectedNum").text(parseFloat($('#initInfectedNum').val()));
+				$('#initRecoverNum').slider('setValue', true_data.dead_accu[true_data.time.left] + true_data.cure_accu[true_data.time.left]);
+				$("#cur_initRecoverNum").text(parseFloat($('#initRecoverNum').val()));
 
-			$('#initInfectedNum').slider('setValue', data.diagnosed_accu[data.time.left]);
-			$("#cur_initInfectedNum").text(parseFloat($('#initInfectedNum').val()));
-			$('#initRecoverNum').slider('setValue', data.dead_accu[data.time.left] + data.cure_accu[data.time.left]);
-			$("#cur_initRecoverNum").text(parseFloat($('#initRecoverNum').val()));
+				if(area_choose["全国"]){
+					$('#initSusceptibleNum').slider({
+						max: province_population["全国"]
+					});
+					$('#initSusceptibleNum').slider('setValue', province_population["全国"] - $('#initInfectedNum').val() - $('#initRecoverNum').val());
+					$("#cur_initSusceptibleNum").text(parseFloat($('#initSusceptibleNum').val()));
+				}
+				else{
+					var total_num = 0;
+					if(area_choose["其它"]){
+						total_num = 1395380000 - 59170000;
+					}
+					else{
+						for(var j = 0; j < true_area.length; j++){
+							total_num += province_population[true_area[j]];
+						}
+					}
+					$('#initSusceptibleNum').slider({
+						max: total_num
+					});
+					$('#initSusceptibleNum').slider('setValue', total_num - $('#initInfectedNum').val() - $('#initRecoverNum').val());
+					$("#cur_initSusceptibleNum").text(parseFloat($('#initSusceptibleNum').val()));
+				}
+			}
+			else if(model_type == 1){
+				$('#initIncubatedNum').slider('setValue', 0);
+				$("#cur_initIncubatedNumm").text(parseFloat($('#initIncubatedNum').val()));
+				$('#initInfectedNum').slider('setValue', true_data.diagnosed_accu[true_data.time.left]);
+				$("#cur_initInfectedNum").text(parseFloat($('#initInfectedNum').val()));
+				$('#initRecoverNum').slider('setValue', true_data.dead_accu[true_data.time.left] + true_data.cure_accu[true_data.time.left]);
+				$("#cur_initRecoverNum").text(parseFloat($('#initRecoverNum').val()));
+
+				if(area_choose["全国"]){
+					$('#initSusceptibleNum').slider({
+						max: province_population["全国"]
+					});
+					$('#initSusceptibleNum').slider('setValue', province_population["全国"] - $('#initIncubatedNum').val() - $('#initInfectedNum').val() - $('#initRecoverNum').val());
+					$("#cur_initSusceptibleNum").text(parseFloat($('#initSusceptibleNum').val()));
+				}
+				else{
+					var total_num = 0;
+					if(area_choose["其它"]){
+						total_num = 1395380000 - 59170000;
+					}
+					else{
+						for(var j = 0; j < true_area.length; j++){
+							total_num += province_population[true_area[j]];
+						}
+					}
+					$('#initSusceptibleNum').slider({
+						max: total_num
+					});
+					$('#initSusceptibleNum').slider('setValue', total_num - $('#initIncubatedNum').val() - $('#initInfectedNum').val() - $('#initRecoverNum').val());
+					$("#cur_initSusceptibleNum").text(parseFloat($('#initSusceptibleNum').val()));
+				}
+			}
+			else{
+				$('#initInfectedNum').slider('setValue', 0);
+				$("#cur_initInfectedNum").text(parseFloat($('#initInfectedNum').val()));
+				$('#initRecoverNum').slider('setValue', true_data.cure_accu[true_data.time.left]);
+				$("#cur_initRecoverNum").text(parseFloat($('#initRecoverNum').val()));
+				$('#initConfirmNum').slider('setValue', true_data.diagnosed_accu[true_data.time.left]);
+				$("#cur_initConfirmNum").text(parseFloat($('#initConfirmNum').val()));
+				$('#initDeadNum').slider('setValue', true_data.dead_accu[true_data.time.left]);
+				$("#cur_initDeadNum").text(parseFloat($('#initDeadNum').val()));
+
+				if(area_choose["全国"]){
+					$('#initSusceptibleNum').slider({
+						max: province_population["全国"]
+					});
+					$('#initSusceptibleNum').slider('setValue', province_population["全国"] - $('#initConfirmNum').val() - $('#initInfectedNum').val() - $('#initRecoverNum').val() - $('#initDeadNum').val());
+					$("#cur_initSusceptibleNum").text(parseFloat($('#initSusceptibleNum').val()));
+				}
+				else{
+					var total_num = 0;
+					if(area_choose["其它"]){
+						total_num = 1395380000 - 59170000;
+					}
+					else{
+						for(var j = 0; j < true_area.length; j++){
+							total_num += province_population[true_area[j]];
+						}
+					}
+					$('#initSusceptibleNum').slider({
+						max: total_num
+					});
+					$('#initSusceptibleNum').slider('setValue', total_num - $('#initConfirmNum').val() - $('#initInfectedNum').val() - $('#initRecoverNum').val() - $('#initDeadNum').val());
+					$("#cur_initSusceptibleNum").text(parseFloat($('#initSusceptibleNum').val()));
+				}
+			}
 
 			params.getdata();
 		}

@@ -122,3 +122,18 @@ span,text,button, input, select, textarea{
 #tr_delta {
 	display: none;
 }
+#tr_mu{
+	display: none;
+}
+#tr_gamma_1{
+	display: none;
+}
+#tr_gamma_2{
+	display: none;
+}
+#tr_delta_1{
+	display: none;
+}
+#tr_delta_2{
+	display: none;
+}
