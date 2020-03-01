@@ -158,7 +158,7 @@ function Params(Observer){
 				else{
 					var total_num = 0;
 					if(area_choose["其它"]){
-						total_num = 1395380000 - 59170000;
+						total_num = 1427975900 - 59170000;
 					}
 					else{
 						for(var j = 0; j < true_area.length; j++){
@@ -190,7 +190,7 @@ function Params(Observer){
 				else{
 					var total_num = 0;
 					if(area_choose["其它"]){
-						total_num = 1395380000 - 59170000;
+						total_num = 1427975900 - 59170000;
 					}
 					else{
 						for(var j = 0; j < true_area.length; j++){
@@ -224,7 +224,7 @@ function Params(Observer){
 				else{
 					var total_num = 0;
 					if(area_choose["其它"]){
-						total_num = 1395380000 - 59170000;
+						total_num = 1427975900 - 59170000;
 					}
 					else{
 						for(var j = 0; j < true_area.length; j++){
