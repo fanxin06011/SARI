@@ -14,6 +14,8 @@ function Line(Observer) {
     var timeStart = 1578585600000;
     var lineType = "line_abs";
     var dataAll = [];
+    let keys = ['Recovered', 'Infectious'];
+    let keys_set = new Set(keys);
     var colorArr = {"Recovered": "#4095F7", "Unknown": "#D7D599", "Infectious": "#DE5E5B"};
     var keysMap = {"Recovered": "康复", "Unknown": "未知", "Infectious": "确诊"};
 
@@ -63,8 +65,8 @@ function Line(Observer) {
 		var n_days = original_input_truedata.time.right - original_input_truedata.time.left + 1;
 		// var pairs_true_data = _.pairs(true_data);
 		// var pairs_model_data = _.pairs(model_data);
-		let keys = _.keys(model_data);
-		if (keys.length === 0) return;
+		// let keys = _.keys(model_data);
+		if (Object.keys(model_data) === 0) return;
 		var n_lines = keys.length;
 		// var maxnum = Math.max(_.max(pairs_model_data.map(d => _.max(d[1]))), _.max(pairs_true_data.map(d => _.max(d[1]))));
 		let pairs_true_data, pairs_model_data;
@@ -88,21 +90,21 @@ function Line(Observer) {
             for (let i = 0; i < n_days; i++) {
             	// true data
                 sum_tmp = 0;
-                for (let key in true_data) {
+                for (let key of keys) {
                     sum_tmp = sum_tmp + true_data[key][i];
                 }
-                for (let key in true_data) {
+                for (let key of keys) {
                 	true_data_per[key].push(true_data[key][i] / sum_tmp);
                 }
 
                 // model data
 				sum_tmp = 0;
-                for (let key in model_data){
+                for (let key of keys){
                 	if (model_data.hasOwnProperty(key)) {
 						sum_tmp += model_data[key][i];
 					}
 				}
-                for (let key in model_data){
+                for (let key of keys){
                 	if (model_data.hasOwnProperty(key)){
 						model_data_per[key].push(model_data[key][i] / sum_tmp);
 					}
@@ -112,10 +114,12 @@ function Line(Observer) {
 			pairs_model_data = Object.entries(model_data_per);
         }
         else{
-			pairs_true_data = Object.entries(true_data);
-			pairs_model_data = Object.entries(model_data);
-			maxnum = Math.max(_.max(pairs_model_data.map(d => _.max(d[1]))), _.max(pairs_true_data.map(d => _.max(d[1]))));
+			pairs_true_data = Object.entries(true_data).filter(d => keys_set.has(d[0]));
+			pairs_model_data = Object.entries(model_data).filter(d => keys_set.has(d[0]));
+			maxnum = Math.max(_.max(pairs_model_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))),
+                _.max(pairs_true_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))));
 		}
+        console.log('maxnum ', maxnum);
 
         console.log('handled true data', pairs_true_data);
 		console.log('handled model data', pairs_model_data);
@@ -127,7 +131,7 @@ function Line(Observer) {
         var y_scale = d3.scaleLinear().domain([0, maxnum]).range([height - padding.bottom, padding.top]);
 
         var lineCurve = d3.line()
-            .curve(d3.curveBasis)
+            .curve(d3.curveCatmullRom)
             .x(function (d, i) {
                 return x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + i) * 24 * 60 * 60 * 1000));
             })
@@ -249,7 +253,7 @@ function Line(Observer) {
                     return y_scale(d);
                 })
                 .attr("r", 2)
-                .style("fill", colorArr[keys[k]]);
+                .style("fill", colorArr[pairs_model_data[k][0]]);
         }
         for (var k = 0; k < pairs_true_data.length; k++) {
             svg.append("g").attr("class", "circleg")
@@ -263,7 +267,7 @@ function Line(Observer) {
                     return y_scale(d);
                 })
                 .attr("r", 2)
-                .style("fill", colorArr[keys[k]]);
+                .style("fill", colorArr[pairs_true_data[k][0]]);
         }
 
         // 每天新增 柱状图
