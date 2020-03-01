@@ -317,7 +317,9 @@ function Line(Observer) {
     }
 
     line.onMessage = function (message, data, from) {
-        if (message == "showResult") {
+        console.log('line on message ', message)
+        if (message === "showResult") {
+            console.log('line start')
             dataAll = data;
             drawLines();
         }

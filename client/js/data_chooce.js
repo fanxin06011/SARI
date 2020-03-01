@@ -329,11 +329,11 @@ DataPanel.prototype.reload_time = function () {
         .attr("y", function (d, i) {
             return y_scale(new_data[i] + 0.1)
 
-        })
-    this.select_info_text.text("")
-    this.select_date_text.text("")
-    this.select_accu_text.text("")
-}
+        });
+    this.select_info_text.text("");
+    this.select_date_text.text("");
+    this.select_accu_text.text("");
+};
 
 
 DataPanel.prototype.get_data = function (input_data) {
@@ -577,7 +577,6 @@ DataPanel.prototype.load_range = function (places, columns_max = 3) {
             panel.reload_time();
             panel.send_message();
         })
-
 };
 
 DataPanel.prototype.send_message = function () {

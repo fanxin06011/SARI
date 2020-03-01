@@ -89,7 +89,7 @@ function Params(Observer){
 			}
 		});
 		$(".slider.slider-horizontal").width($("#left-top-div").width()-190)
-	})
+	});
 
 	params.getdata=function(){
 		for(var i=0;i<paramsIdArr.length;i++){
@@ -113,15 +113,16 @@ function Params(Observer){
 				Observer.fireEvent("showResult",[true_data,model_data],params);
 			},
 			error: function(jqXHR) {
+				Observer.fireEvent('showResult', [true_data, []], params);
 				console.log('post error!!', jqXHR);
 			},
 		});
-	}
+	};
 
     params.onMessage = function(message, data, from){
 		// if(message=="update_data_range" && from!=params){
-		if(message=="update_data_range"){
-			if(from != params){
+		if(message==="update_data_range"){
+			if(from !== params){
 				// data.time 事件范围，从第几天到第几天，数据的第一天为0.
 				// data.area 一个字典，表示各个省份是否被选中，选中为true， 不选中为false
 				// data.new 每日新增的数组，从第0天到最后一天。
