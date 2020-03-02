@@ -68,9 +68,8 @@
 					</td>
 				</tr>
 				<tr>
-					<!-- <td><span>&nbsp; &nbsp; 感染率 &#946;:&nbsp; &nbsp; </span></td> -->	
-					<td><span>感染率 &#946;:</span></td>
-					<td id="cur_infectRate">0.8</td>
+					<td><span>&nbsp; &nbsp; 感染率 &#946;:</span></td>	
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_infectRate" name="infectRate" value=0.8></td>
 					<td>
 						<input id="infectRate" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -78,8 +77,8 @@
 					</td>
 				</tr>
 				<tr id="tr_recoverRate">
-					<td><span>康复率 &#947;:</span></td>
-					<td id="cur_recoverRate">0.2</td>
+					<td><span>&nbsp; &nbsp; 康复率 &#947;:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_recoverRate" name="recoverRate" value=0.2></td>
 					<td>
 						<input  id="recoverRate" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -87,8 +86,8 @@
 					</td>
 				</tr>
 				<tr id="tr_gamma_1">
-					<td><span>感染者康复率 &#947;<sub>1:</span></td>
-					<td id="cur_gamma_1">0.2</td>
+					<td><span>&nbsp; &nbsp; 潜伏者康复率 &#947;<sub>1</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_gamma_1" name="gamma_1" value=0.001></td>
 					<td>
 						<input  id="gamma_1" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.001"
@@ -96,8 +95,8 @@
 					</td>
 				</tr>
 				<tr id="tr_gamma_2">
-					<td><span>确诊者康复率 &#947;<sub>2:</span></td>
-					<td id="cur_gamma_2">0.2</td>
+					<td><span>&nbsp; &nbsp; 确诊者康复率 &#947;<sub>2</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_gamma_2" name="gamma_2" value=0.2></td>
 					<td>
 						<input  id="gamma_2" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -105,8 +104,8 @@
 					</td>
 				</tr>
 				<tr id="tr_sigma">
-					<td><span>发病率 &#963;:</span></td>
-					<td id="cur_sigma">0.05</td>
+					<td><span>&nbsp; &nbsp; 发病率 &#963;:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_sigma" name="sigma" value=0.05></td>
 					<td>
 						<input id="sigma" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -114,8 +113,8 @@
 					</td>
 				</tr>
 				<tr id="tr_delta">
-					<td><span>死亡率 &#948;:</span></td>
-					<td id="cur_delta">0.05</td>
+					<td><span>&nbsp; &nbsp; 死亡率 &#948;:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_delta" name="delta" value=0.05></td>
 					<td>
 						<input id="delta" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -123,8 +122,8 @@
 					</td>
 				</tr>
 				<tr id="tr_delta_1">
-					<td><span>感染者死亡率 &#948;<sub>1:</span></td>
-					<td id="cur_delta_1">0.05</td>
+					<td><span>&nbsp; &nbsp; 潜伏者死亡率 &#948;<sub>1</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_delta_1" name="delta_1" value=0.001></td>
 					<td>
 						<input id="delta_1" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.001"
@@ -132,8 +131,8 @@
 					</td>
 				</tr>
 				<tr id="tr_delta_2">
-					<td><span>确诊者死亡率 &#948;<sub>2:</span></td>
-					<td id="cur_delta_2">0.05</td>
+					<td><span>&nbsp; &nbsp; 确诊者死亡率 &#948;<sub>2</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_delta_2" name="delta_2" value=0.05></td>
 					<td>
 						<input id="delta_2" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -141,8 +140,8 @@
 					</td>
 				</tr>
 				<tr id="tr_mu">
-					<td><span>传染率下降 &mu;:</span></td>
-					<td id="cur_mu">0.05</td>
+					<td><span>&nbsp; &nbsp; 传染率下降 &mu;:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_mu" name="mu" value=0.05></td>
 					<td>
 						<input id="mu" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="1" data-slider-step="0.01"
@@ -150,8 +149,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>初始健康数 S<sub>0</sub>:</span></td>
-					<td id="cur_initSusceptibleNum">10000</td>
+					<td><span>&nbsp; &nbsp; 初始易感数 S<sub>0</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_initSusceptibleNum" name="initSusceptibleNum" value=10000></td>
 					<td>
 						<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
@@ -159,8 +158,8 @@
 					</td>
 				</tr>
 				<tr id="tr_initIncubatedNum">
-					<td><span>初始潜伏数 E<sub>0</sub>:</span></td>
-					<td id="cur_initIncubatedNum">0</td>
+					<td><span>&nbsp; &nbsp; 初始潜伏数 E<sub>0</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_initIncubatedNum" name="initIncubatedNum" value=0></td>
 					<td>
 						<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
@@ -168,17 +167,18 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>初始感染数 I<sub>0</sub>:</span></td>
-					<td id="cur_initInfectedNum">3</td>
+					<td><span id="text_initInfectedNum">&nbsp; &nbsp; 初始感染数 I<sub>0</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_initInfectedNum" name="initInfectedNum" value=3></td>
 					<td>
 						<input  id="initInfectedNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
 							data-slider-value="3"/>
 					</td>
 				</tr>
+				<tr>
 				<tr id="tr_initConfirmNum">
-					<td><span>初始确诊数 J<sub>0</sub>:</span></td>
-					<td id="cur_initConfirmNum">0</td>
+					<td><span>&nbsp; &nbsp; 初始确诊数 J<sub>0</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_initConfirmNum" name="initConfirmNum" value=0></td>
 					<td>
 						<input  id="initConfirmNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
@@ -186,8 +186,8 @@
 					</td>
 				</tr>
 				<tr>
-					<td><span>初始康复数 R<sub>0</sub>:</span></td>
-					<td id="cur_initRecoverNum">0</td>
+					<td><span id="text_initRecoverNum">&nbsp; &nbsp; 初始恢复数 R<sub>0</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_initRecoverNum" name="initRecoverNum" value=0></td>
 					<td>
 						<input  id="initRecoverNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
@@ -195,8 +195,8 @@
 					</td>
 				</tr>
 				<tr id="tr_initDeadNum">
-					<td><span>初始死亡数 D<sub>0</sub>:</span></td>
-					<td id="cur_initDeadNum">0</td>
+					<td><span>&nbsp; &nbsp; 初始死亡数 D<sub>0</sub>:</span></td>
+					<td class="td_parameter"><input type="text" class="parameter" id="cur_initDeadNum" name="initDeadNum" value=0></td>
 					<td>
 						<input  id="initDeadNum" data-slider-id="ex1Slider" type="text"
 							data-slider-min="0" data-slider-max="100000" data-slider-step="1"
@@ -206,9 +206,9 @@
 			</table>
 		</div>
 
-		<div id="left-bottom-div" class="outer-div">
+		<!-- <div id="left-bottom-div" class="outer-div">
 
-		</div>
+		</div> -->
 	</div>
 	<div id="middle-div" class="outer-div">
 

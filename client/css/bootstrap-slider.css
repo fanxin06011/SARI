@@ -152,9 +152,11 @@
   display: none;
 }
 .slider .tooltip.top {
+  display: none;
   margin-top: -36px;
 }
 .slider .tooltip-inner {
+  display: none;
   white-space: nowrap;
   max-width: none;
 }

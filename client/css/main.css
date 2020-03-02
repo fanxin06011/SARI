@@ -32,7 +32,7 @@ span,text,button, input, select, textarea{
 }
 #left-div{
 	left:0%;
-	width: 20%;
+	width: 25%;
 	height: 100%;
 	background-color: #d5d5d5;
 	flex:none;
@@ -42,19 +42,20 @@ span,text,button, input, select, textarea{
 #left-top-div{
 	left:0%;
 	width: 100%;
-	flex:none;
+	height: 100%;
+	/* flex:none;
 	display: flex;
-	flex-direction: column;
+	flex-direction: column; */
 }
-#left-bottom-div{
+/* #left-bottom-div{
 	width: 100%;
 	flex:1;
 	display: flex;
 	flex-direction: column;
-}
+} */
 #middle-div{
-	left:20%;
-	width: 20%;
+	left:25%;
+	width: 25%;
 	height: 100%;
 	flex:none;
 	display: flex;
@@ -91,11 +92,15 @@ span,text,button, input, select, textarea{
 #ex1Slider .slider-selection {  
 	background: #BABABA;  
 } 
+#ex1Slider{
+	width: 100px;
+}
 .slider{
+	cursor: pointer;
 	padding:2px;
 }
 .slider.slider-horizontal {
-    width: 120px;
+    width: 100px;
     height: 15px;
 }
 .slider.slider-horizontal .slider-track {
@@ -108,8 +113,8 @@ span,text,button, input, select, textarea{
 .slider-handle {
     position: absolute;
     top: 0;
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
 	background-image: linear-gradient(to bottom, #a9a9a9 0%, #777777 100%);
 }
 
@@ -136,4 +141,11 @@ span,text,button, input, select, textarea{
 }
 #tr_delta_2{
 	display: none;
+}
+.td_parameter{
+	width: 90px;
+}
+.parameter{
+	width: 80px;
+	cursor: text;
 }
