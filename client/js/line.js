@@ -6,7 +6,7 @@ function Line(Observer) {
     var height = $brtDiv.height();
 
     var padding = {
-        left: 100,
+        left: 80,
         right: 50,
         top: 30,
         bottom: 30
@@ -148,7 +148,7 @@ function Line(Observer) {
         var rectg = svg.append("g").attr("class", "rectg");
         var lineg = svg.append("g").attr("class", "lineg").style('pointer-events', 'none');
         let detailg = svg.append('g').attr('class', 'detailg');
-        let cursor_line = detailg.append('line').style('stroke', 'yellow').style('stroke-width', 2);
+        let cursor_line = detailg.append('line').style('stroke', '#aaa').style('stroke-width', 2);
         let cursor_points = detailg.append('g');
         // let tooltip = $('div#line-tooltip');
         let tooltip = d3.select('div#line-tooltip');
@@ -190,9 +190,7 @@ function Line(Observer) {
                     .attr('x1', rounded_x_pos)
                     .attr('x2', rounded_x_pos)
                     .attr('y1', padding.top)
-                    .attr('y2', height - padding.bottom)
-                    .style('stroke-width', 1)
-                    .style('stroke', 'yellow');
+                    .attr('y2', height - padding.bottom);
 
                 tooltip
                     .style('left', function(){
