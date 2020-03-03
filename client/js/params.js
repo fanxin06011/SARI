@@ -88,7 +88,7 @@ function Params(Observer){
 				imgHeight=$(this).height();
 			}
 		})
-		$(".modelImage").map(function(){$(this).height(imgHeight);})
+		$(".modelImage").map(function(){$(this).height(imgHeight + 20);})
 		// $("#left-top-div").height(imgHeight+243);
 
 		// 隐藏除了默认模块之外的其他模块的图示
