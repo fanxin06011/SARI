@@ -215,7 +215,6 @@ function Line(Observer) {
                             col0 = `<td rowspan="${model_points.length}" style="vertical-align: middle">模型预测</td>`;
                             col1 = `<td>${keysMap[model_points[i][1]]}</td>`;
                             col2 = `<td>${text_format(model_points[i][2])}</td>`;
-                            // console.log('modelpoints ', model_points[i][2])
                             if (i === 0) model_rows += `<tr>${(col0 + col1 + col2)}</tr>`;
                             else model_rows += `<tr>${col1 + col2}</tr>`;
                         }
