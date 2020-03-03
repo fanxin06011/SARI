@@ -323,7 +323,7 @@ function Params(Observer){
 
 			params.getdata();
 		}
-	}
+	};
 
 	Observer.addView(params);
 	return params;

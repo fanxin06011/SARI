@@ -149,3 +149,7 @@ span,text,button, input, select, textarea{
 	width: 80px;
 	cursor: text;
 }
+
+div#left-top-div input[type=text]{
+	border: none;
+}
