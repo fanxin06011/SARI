@@ -154,7 +154,7 @@ function Params(Observer){
 				}
 			}
 		});
-		$(".slider.slider-horizontal").width($("#left-top-div").width()-210)
+		$(".slider.slider-horizontal").width($("#left-top-div").width()-220)
 	});
 
 	params.getdata=function(){
