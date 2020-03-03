@@ -16,7 +16,7 @@ function Line(Observer) {
     var dataAll = [];
     let keys = ['Recovered', 'Infectious'];
     let keys_set = new Set(keys);
-    var colorArr = {"Recovered": "#70ad47", "Unknown": "#D7D599", "Infectious": "#DE5E5B"};
+    var colorArr = {"Recovered": "#70ad47", "Unknown": "#D7D599", "Infectious": "#ED7D31"};
     var keysMap = {"Recovered": "恢复", "Unknown": "未知", "Infectious": "确诊"};
 
     var svg = d3.select("#line-div")
