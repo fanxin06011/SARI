@@ -160,7 +160,7 @@ function Line(Observer) {
             .style('fill', 'white')
             .on('mousemove', function(){
                 let pos = d3.mouse(svg.node());
-                let cursorpoint_radius = 3;
+                let cursorpoint_radius = 5;
                 let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart) / 24 / 60 / 60 / 1000);
                 let rounded_x_pos = x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + day_idx) * 24 * 60 * 60 * 1000));
                 let true_points = pairs_true_data.map(d => ['true_data', d[0], d[1][day_idx]]);
