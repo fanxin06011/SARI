@@ -89,7 +89,7 @@ function Params(Observer){
 			}
 		})
 		$(".modelImage").map(function(){$(this).height(imgHeight + 20);})
-		// $("#left-top-div").height(imgHeight+243);
+		// $("#middle-top-div").height(imgHeight+243);
 
 		// 隐藏除了默认模块之外的其他模块的图示
 		$(".modelImage").hide();
@@ -118,7 +118,7 @@ function Params(Observer){
 					$("#tr_initDeadNum").hide();
 					$("#text_initInfectedNum").html("&nbsp; &nbsp; 初始确诊数 I<sub>0</sub>:");
 					$("#text_initRecoverNum").html("&nbsp; &nbsp; 初始恢复数 R<sub>0</sub>:");
-					// $("#left-top-div").height(imgHeight+200);
+					// $("#middle-top-div").height(imgHeight+200);
 				}
 				else if(newtype == 1){
 					$("#tr_sigma").show();
@@ -134,7 +134,7 @@ function Params(Observer){
 					$("#tr_initDeadNum").hide();
 					$("#text_initInfectedNum").html("&nbsp; &nbsp; 初始确诊数 I<sub>0</sub>:");
 					$("#text_initRecoverNum").html("&nbsp; &nbsp; 初始恢复数 R<sub>0</sub>:");
-					// $("#left-top-div").height(imgHeight+243);
+					// $("#middle-top-div").height(imgHeight+243);
 				}
 				else{
 					$("#tr_sigma").show();
@@ -150,11 +150,11 @@ function Params(Observer){
 					$("#tr_initDeadNum").show();
 					$("#text_initInfectedNum").html("&nbsp; &nbsp; 初始潜伏数 I<sub>0</sub>:");
 					$("#text_initRecoverNum").html("&nbsp; &nbsp; 初始治愈数 R<sub>0</sub>:");
-					// $("#left-top-div").height(imgHeight+330);
+					// $("#middle-top-div").height(imgHeight+330);
 				}
 			}
 		});
-		$(".slider.slider-horizontal").width($("#left-top-div").width()-220)
+		$(".slider.slider-horizontal").width($("#middle-top-div").width()-250)
 	});
 
 	params.getdata=function(){

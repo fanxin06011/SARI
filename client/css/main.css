@@ -14,7 +14,7 @@ span,text,button, input, select, textarea{
 	background-color: #fff;
 	border-radius: 7px;
 	border-left: 4px solid #d5d5d5;
-	border: 2px solid #d5d5d5;
+	border: 1px solid #d5d5d5;
 }
 
 .block-div {
@@ -32,32 +32,68 @@ span,text,button, input, select, textarea{
 }
 #left-div{
 	left:0%;
-	width: 25%;
+	width: 30%;
 	height: 100%;
-	background-color: #d5d5d5;
 	flex:none;
 	display: flex;
 	flex-direction: column;
 }
-#left-top-div{
+#data_choose{
 	left:0%;
-	width: 100%;
-	height: 100%;
-	/* flex:none;
+	flex:none;
 	display: flex;
-	flex-direction: column; */
+	flex-direction: column;
 }
-/* #left-bottom-div{
+#area_choose{
 	width: 100%;
 	flex:1;
 	display: flex;
 	flex-direction: column;
-} */
+}
 #middle-div{
-	left:25%;
-	width: 25%;
+	left:30%;
+	width: 30%;
 	height: 100%;
 	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#model_build{
+	left:0%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#middle-top-div{
+	left:0%;
+	width: 100%;
+	height: 8%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#middle-bottom-div{
+	/* width: 100%; */
+	margin: 5px;
+	background-color: #F5F5F5;
+	flex:1;
+	display: flex;
+	flex-direction: column;
+	border-radius: 7px;
+}
+#model_image{
+	margin: 5px;
+	background-color: #fff;
+	border-radius: 7px;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#model_param{
+	margin: 5px;
+	background-color: #fff;
+	border-radius: 7px;
+	flex:1;
 	display: flex;
 	flex-direction: column;
 }
@@ -65,6 +101,9 @@ span,text,button, input, select, textarea{
 	flex:1;
 	display: flex;
 	flex-direction: column;
+}
+#model_output{
+	left:0%;
 }
 #line-div{
 	left:0%;
@@ -85,8 +124,12 @@ span,text,button, input, select, textarea{
 }
 
 #line-selector{
-	height: 20px;
-	width: 100%;
+	margin: 5px;
+	background-color: #F5F5F5;
+	border-radius: 7px;
+	flex:none;
+	display: flex;
+	flex-direction: column;
 }
 
 #ex1Slider .slider-selection {  
@@ -150,6 +193,14 @@ span,text,button, input, select, textarea{
 	cursor: text;
 }
 
-div#left-top-div input[type=text]{
+div#middle-top-div input[type=text]{
 	border: none;
+}
+
+.text_div{
+	margin: 5px;
+	background-color: #F5F5F5;
+	font-size: 20px;
+	text-align: center;
+	border-radius: 7px;
 }
