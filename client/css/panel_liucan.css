@@ -1,5 +1,5 @@
 .province_button.selected_area_button rect{
-	fill: #91868c;
+	fill: #666;
 	stroke-width: 0;
 	/*stroke: #444;*/
 }
@@ -22,12 +22,12 @@
 
 .whole-country.selected_area_button rect{
 	stroke-width: 0;
-	fill: #dbdbdb;
+	fill: #ccc;
 }
 
 .other-province.selected_area_button rect{
 	stroke-width: 0;
-	fill: #b3b3b3;
+	fill: #999;
 }
 
 .whole-country rect,

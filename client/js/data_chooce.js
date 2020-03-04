@@ -47,7 +47,7 @@ DataPanel.prototype.load_title = function () {
     this.title = svg.append("g")
         .attr("transform", function (d) {
             return "translate(" + title_position.left + "," + title_position.top + ")"
-        })
+        });
     // this.title.append('rect')
     // 	.attr("x", title_position.width * 0.05)
     // 	.attr("y", title_position.height * 0.2 )

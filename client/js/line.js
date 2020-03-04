@@ -37,10 +37,11 @@ function Line(Observer) {
 				population += province_population[province];
 			}
 		}
-		let I = true_data.diagnosed_accu;
-		let R = true_data.cure_accu.map((d, i) => d + true_data.dead_accu[i]);
+		let {left, right} = true_data.time;
+		let I = true_data.diagnosed_accu.slice(left, right + 1);
+		let R = true_data.cure_accu.slice(left, right + 1).map((d, i) => d + true_data.dead_accu.slice(left, right + 1)[i]);
 		let U = I.map((d, i) => population - I[i] - R[i]);
-		console.log('all population', population)
+		console.log('all population', population);
 		return {'Recovered': R, 'Unknown': U, 'Infectious': I};
 	}
 
@@ -66,7 +67,7 @@ function Line(Observer) {
 		// var pairs_true_data = _.pairs(true_data);
 		// var pairs_model_data = _.pairs(model_data);
 		// let keys = _.keys(model_data);
-		if (Object.keys(model_data).length === 0) return;
+		// if (Object.keys(model_data).length === 0) return;
 		var n_lines = keys.length;
 		// var maxnum = Math.max(_.max(pairs_model_data.map(d => _.max(d[1]))), _.max(pairs_true_data.map(d => _.max(d[1]))));
 		let pairs_true_data, pairs_model_data;
@@ -100,7 +101,6 @@ function Line(Observer) {
                 // model data
 				sum_tmp = 0;
                 for (let key in model_data){
-                    console.log(key);
                 	if (model_data.hasOwnProperty(key)) {
 						sum_tmp += model_data[key][i];
 					}
@@ -127,21 +127,21 @@ function Line(Observer) {
         console.log('handled true data', pairs_true_data);
 		console.log('handled model data', pairs_model_data);
 
-        var x_scale = d3.scaleTime()
+		console.log('brushed time', original_input_truedata['time']);
+        let x_scale = d3.scaleTime()
             .domain([new Date(timeStart + original_input_truedata["time"]["left"] * 24 * 60 * 60 * 1000),
 				new Date(timeStart + original_input_truedata["time"]["right"] * 24 * 60 * 60 * 1000)])
             .range([padding.left, width - padding.right]);
-        var y_scale_linear = d3.scaleLinear().domain([0, maxnum]).range([height - padding.bottom, padding.top]);
+        let y_scale_linear = d3.scaleLinear().domain([0, maxnum]).range([height - padding.bottom, padding.top]);
         let y_scale_log = d3.scaleLog().domain([1, maxnum]).range([height - padding.bottom, padding.top]);
 
-        var lineCurve = d3.line()
+        let lineCurve = d3.line()
             .curve(d3.curveCatmullRom)
             .x(function (d, i) {
                 return x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + i) * 24 * 60 * 60 * 1000));
             })
             .y(function (d) {
-                // return y_scale_linear(d);
-                return lineType === 'line_per' ? y_scale_linear(d) : y_scale_log(d);
+                return lineType === 'line_per' ? y_scale_linear(d) : y_scale_log(Math.max(d, 1));
             });
 
         //var backg=svg.append("g").attr("class","backg");
@@ -151,17 +151,40 @@ function Line(Observer) {
         let cursor_line = detailg.append('line').style('stroke', '#aaa').style('stroke-width', 2);
         let cursor_points = detailg.append('g');
         // let tooltip = $('div#line-tooltip');
-        let tooltip = d3.select('div#line-tooltip');
+        let tooltip = d3.select('div#line-tooltip')
+            .style('display', 'none')
+            .html(function(){
+                let true_rows = ``;
+                let col0, col1, col2;
+                for (let i = 0; i < keys.length; ++i){
+                    col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">真实数据</td>`;
+                    col1 = `<td>${keysMap[keys[i]]}</td>`;
+                    col2 = `<td class="data-cell"></td>`;
+                    if (i === 0) true_rows += `<tr value-type="true" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
+                    else true_rows += `<tr value-type="true" value-name="${keys[i]}">${col1 + col2}</tr>`;
+                }
+                let model_rows = ``;
+                for (let i = 0; i < keys.length; ++i){
+                    col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">模型预测</td>`;
+                    col1 = `<td>${keysMap[keys[i]]}</td>`;
+                    col2 = `<td class="data-cell"></td>`;
+                    if (i === 0) model_rows += `<tr value-type="model" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
+                    else model_rows += `<tr value-type="model" value-name="${keys[i]}">${col1 + col2}</tr>`;
+                }
+                let table = `<table class="table">${true_rows + model_rows}</table>`;
+                return table;
+            });
         let selection_rect = svg.append('rect')
             .attr('x', padding.left)
             .attr('y', padding.top)
             .attr('width', width - padding.left - padding.right)
             .attr('height', height - padding.bottom - padding.top)
             .style('fill', 'white')
+            .style('opacity', 0)
             .on('mousemove', function(){
                 let pos = d3.mouse(svg.node());
                 let cursorpoint_radius = 5;
-                let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart) / 24 / 60 / 60 / 1000);
+                let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart - original_input_truedata["time"]["left"] * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
                 let rounded_x_pos = x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + day_idx) * 24 * 60 * 60 * 1000));
                 let true_points = pairs_true_data.map(d => ['true_data', d[0], d[1][day_idx]]);
                 let model_points = pairs_model_data.map(d => ['model_data', d[0], d[1][day_idx]]);
@@ -196,33 +219,21 @@ function Line(Observer) {
                     .style('left', function(){
                         return (d3.event.x - 20 - $(this).width()) + 'px';
                     })
-                    .style('top', (d3.event.y + 10) + 'px')
-                    .html(function(){
-                        let true_rows = ``;
-                        let col0, col1, col2;
-                        let text_format = lineType === 'line_per' ? data_format : d => Math.round(d);
-                        for (let i = 0; i < true_points.length; ++i){
-                            col0 = `<td rowspan="${true_points.length}" style="vertical-align: middle">真实数据</td>`;
-                            col1 = `<td>${keysMap[true_points[i][1]]}</td>`;
-                            col2 = `<td>${text_format(true_points[i][2])}</td>`;
-                            if (i === 0) true_rows += `<tr>${(col0 + col1 + col2)}</tr>`;
-                            else true_rows += `<tr>${col1 + col2}</tr>`;
-                        }
-                        let model_rows = ``;
-                        for (let i = 0; i < model_points.length; ++i){
-                            col0 = `<td rowspan="${model_points.length}" style="vertical-align: middle">模型预测</td>`;
-                            col1 = `<td>${keysMap[model_points[i][1]]}</td>`;
-                            col2 = `<td>${text_format(model_points[i][2])}</td>`;
-                            if (i === 0) model_rows += `<tr>${(col0 + col1 + col2)}</tr>`;
-                            else model_rows += `<tr>${col1 + col2}</tr>`;
-                        }
-                        let table = `<table class="table">${true_rows + model_rows}</table>`;
-                        return table;
-                    })
+                    .style('top', (d3.event.y + 10) + 'px');
+                let text_format = lineType === 'line_per' ? data_format : d => Math.round(d);
+                for (let i = 0; i < true_points.length; ++i){
+                    tooltip.select(`tr[value-type=true][value-name=${true_points[i][1]}] td.data-cell`)
+                        .text(text_format(true_points[i][2]));
+                }
+                for (let i = 0; i < model_points.length; ++i){
+                    tooltip.select(`tr[value-type=model][value-name=${model_points[i][1]}] td.data-cell`)
+                        .text(text_format(model_points[i][2]));
+                }
             })
             .on('mouseout', function(){
                 cursor_line.style('opacity', 0);
                 cursor_points.style('opacity', 0);
+                console.log('mouseout event triggered');
                 tooltip.style('display', 'none');
             })
             .on('mouseover', function(){
@@ -230,7 +241,7 @@ function Line(Observer) {
                 cursor_points.style('opacity', 0.8);
                 tooltip.style('display', 'block')
             })
-            .lower();
+            .raise();
         let true_data_group = lineg.append('g')
 			.attr('class', 'true-data')
             .selectAll("g")
