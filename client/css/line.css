@@ -6,3 +6,24 @@
     border-radius: 10px;
     pointer-events: none;
 }
+
+#right-div button{
+    transition-duration: 0.2s;
+    background-color: white;
+    text-align: center;
+    width: 100px;
+    border: 2px solid #aaa;
+    border-radius: 5px;
+}
+
+#right-div button:hover{
+    background-color: #999;
+}
+
+#right-div button.option-selected{
+    background-color: #666;
+}
+
+#right-div button:hover{
+
+}

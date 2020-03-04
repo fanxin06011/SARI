@@ -31,6 +31,8 @@
 	<script src="jslib/spin.min.js"></script>
 
     <script src="jslib/jquery.contextMenu.js" type="text/javascript"></script>
+
+<!--	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
     <!-- css -->
     <link rel="stylesheet" href="./css/main.css">
 </head>
@@ -215,8 +217,62 @@
 	</div>
 	<div id="right-div" class="outer-div">
 		<h1 align="center">模型预测结果</h1>
+		<div class="line-panel">
+			<table class="table table-borderless table-sm">
+				<tr>
+					<td>数据来源</td>
+					<td>
+						<div class="form-row">
+							<label for="data-source1-select" class="col-1 my-auto mx-3">A</label>
+							<select id="data-source1-select" class="custom-select custom-select-sm col-5">
+								<option selected>A</option>
+								<option>B</option>
+								<option>C</option>
+							</select>
+						</div>
+					</td>
+					<td>
+						<div class="form-row">
+							<label for="data-source2-select" class="col-1 my-auto mx-3">B</label>
+							<select id="data-source2-select" class="custom-select custom-select-sm col-5">
+								<option selected>A</option>
+								<option>B</option>
+								<option>C</option>
+							</select>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>数据计量</td>
+					<td>
+						<button type="button" cal-option="new">新增</button>
+					</td>
+					<td>
+						<button type="button" cal-option="accu">累计</button>
+					</td>
+				</tr>
+				<tr>
+					<td>数据比较</td>
+					<td>
+						<button type="button" cmp-option="separate">并列</button>
+					</td>
+					<td>
+						<button type="button" cmp-option="diff">A-B</button>
+					</td>
+				</tr>
+				<tr>
+					<td>数据显示</td>
+					<td>
+						<button type="button" display-option="abs">绝对值</button>
+					</td>
+					<td>
+						<button type="button" display-option="per">百分比</button>
+					</td>
+				</tr>
+			</table>
+		</div>
 		<div id="line-selector">
-			&nbsp;&nbsp;<input type="radio" name="line" id="line_abs" checked>&nbsp;&nbsp;<span>绝对值</span>
+			&nbsp;<input type="radio" name="line" id="line_abs" checked>&nbsp;&nbsp;<span>绝对值</span>
 			<input type="radio" name="line" id="line_per" >&nbsp;&nbsp;<span>百分比</span>
 		</div>
 		<div id="line-div">

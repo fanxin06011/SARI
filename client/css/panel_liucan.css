@@ -41,7 +41,7 @@
 
 .whole-country text,
 .other-province text{
-	fill: #606060
+	fill: #606060;
 	transition-duration: 0.2s;
 }
 

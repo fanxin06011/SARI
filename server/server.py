@@ -19,11 +19,13 @@ define("port", default=8663, help="run on the given port", type=int)
 client_file_root_path = os.path.join(os.path.split(__file__)[0], '../client')
 client_file_root_path = os.path.abspath(client_file_root_path)
 
+
 def list_add(a, b):
     c = []
     for i in range(len(a)):
         c.append(a[i] + b[i])
     return c
+
 
 class SEIR(tornado.web.RequestHandler):
     def get(self):

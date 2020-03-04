@@ -1,4 +1,5 @@
 function Line(Observer) {
+    console.log('yese aheofihweeoifwoeif');
     var line = {};
 
     var $brtDiv = $("#line-div");
@@ -345,91 +346,12 @@ function Line(Observer) {
 			.attr('y', 10)
 			.style('dominant-baseline', 'middle')
 			.text(d => d);
-
-        // 打点
-        // for (var k = 0; k < pairs_model_data.length; k++) {
-        //     svg.append("g").attr("class", "circleg")
-        //         .selectAll("circle")
-        //         .data(pairs_model_data[k][1])
-        //         .enter().append("circle")
-        //         .attr("cx", function (d, i) {
-        //             return x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + i) * 24 * 60 * 60 * 1000));
-        //         })
-        //         .attr("cy", function (d) {
-        //             return y_scale(d);
-        //         })
-        //         .attr("r", 2)
-        //         .style("fill", colorArr[pairs_model_data[k][0]]);
-        // }
-        // for (var k = 0; k < pairs_true_data.length; k++) {
-        //     svg.append("g").attr("class", "circleg")
-        //         .selectAll("circle")
-        //         .data(pairs_true_data[k][1])
-        //         .enter().append("circle")
-        //         .attr("cx", function (d, i) {
-        //             return x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + i) * 24 * 60 * 60 * 1000));
-        //         })
-        //         .attr("cy", function (d) {
-        //             return y_scale(d);
-        //         })
-        //         .attr("r", 2)
-        //         .style("fill", colorArr[pairs_true_data[k][0]]);
-        // }
-
-        // 每天新增 柱状图
-        // var new_data = original_input_truedata["diagnosed_new"].slice(original_input_truedata["time"]["left"], original_input_truedata["time"]["right"] + 1);
-        // console.log(new_data);
-        // var newmax = _.max(new_data);
-        // var y_new_scale = d3.scaleLinear().domain([0, newmax]).range([height - padding.bottom, padding.top]);
-        // var rectw = (width - padding.left - padding.right) / (original_input_truedata["time"]["right"] - original_input_truedata["time"]["left"] + 1);
-        // rectg.selectAll("rect")
-        //     .data(new_data)
-        //     .enter().append("rect")
-        //     .attr("fill", "#eee")
-        //     .attr("stroke", "#ccc")
-        //     .attr("stroke-width", "1")
-        //     .attr("x", function (d, i) {
-        //         return padding.left + (width - padding.left - padding.right) / (original_input_truedata["time"]["right"] - original_input_truedata["time"]["left"] + 1) * i;
-        //     })
-        //     .attr("y", function (d, i) {
-        //         return height - padding.bottom - (height - padding.top - padding.bottom) / newmax * d;
-        //     })
-        //     .attr("width", rectw)
-        //     .attr("height", function (d, i) {
-        //         return (height - padding.top - padding.bottom) / newmax * d;
-        //     });
-        // rectg.append("g")
-        //     .attr("class", "y axis")
-        //     .attr("transform", "translate(" + (width - padding.right) + ",0)")
-        //     .call(d3.axisRight(y_new_scale));
-
-        // 用于鼠标悬浮提示具体数据
-        // var backg = svg.append("g").attr("class", "backg")
-        //     .selectAll("rect")
-        //     .data(new_data)
-        //     .enter().append("rect")
-        //     .attr("fill", "black").attr("opacity", 0)
-        //     .attr("x", function (d, i) {
-        //         return padding.left + (width - padding.left - padding.right) / (original_input_truedata["time"]["right"] - original_input_truedata["time"]["left"] + 1) * i;
-        //     })
-        //     .attr("y", padding.top)
-        //     .attr("width", rectw)
-        //     .attr("height", height - padding.top - padding.bottom)
-        //     .append("title").text(function (d, i) {
-        //         var date = new Date(timeStart + (original_input_truedata["time"]["left"] + i) * 24 * 60 * 60 * 1000);
-        //         var str = "日期: " + (date.getMonth() + 1) + "月" + (date.getDate()) + "日 \r";
-        //         for (var j = 0; j < keys.length; j++) {
-        //             str = str + keysMap[keys[j]] + ": " + Math.round(values[j][i]) + " \r";
-        //         }
-        //         str = str + "新增确诊: " + d;
-        //         return str;
-        //     });
     }
 
     line.onMessage = function (message, data, from) {
-        console.log('line on message ', message)
+        console.log('line on message ', message);
         if (message === "showResult") {
-            console.log('line start')
+            console.log('line start');
             dataAll = data;
             drawLines();
         }
