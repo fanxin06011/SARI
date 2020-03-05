@@ -13,9 +13,9 @@ let DataPanel = function (data, provinces) {
     this.place_is_choose['其它'] = true;
 
     this.margin = {left: 0, right: 0, top: 0, bottom: 0};
-    this.width = document.getElementById('middle-div').clientWidth - this.margin.left - this.margin.right,
-        this.height = document.getElementById('middle-div').clientHeight - this.margin.top - this.margin.bottom;
-    this.svg = d3.select("#middle-div").append("svg")
+    this.width = document.getElementById('area_choose').clientWidth - this.margin.left - this.margin.right,
+        this.height = document.getElementById('area_choose').clientHeight - this.margin.top - this.margin.bottom;
+    this.svg = d3.select("#area_choose").append("svg")
         .attr("id", "panel_svg")
         .attr("font-family", "Arial")
         .attr("width", this.width - this.margin.left - this.margin.right)
@@ -28,15 +28,15 @@ let DataPanel = function (data, provinces) {
     this.title_position = {left: 0, top: 0, width: this.width, height: this.height * 0.05};
     this.time_position = {
         left: this.width * 0.08,
-        top: this.height * 0.07,
+        top: this.height * 0.02,
         width: this.width * 0.84,
         height: this.height * 0.40
     };
     this.area_position = {
         left: this.width * 0.05,
-        top: this.height * 0.52,
+        top: this.height * 0.47,
         width: this.width * 0.9,
-        height: this.height * 0.48
+        height: this.height * 0.52
     };
 
     // this.load_title(this.svg, this.title_position)
@@ -56,13 +56,13 @@ DataPanel.prototype.load_title = function () {
     // 	.attr("fill", "blue")
     // 	.attr("rx", title_position.width * 0.05 / 2)
 
-    this.title.append("text")
-        .attr("x", title_position.width / 2)
-        .attr("y", title_position.height * 0.2)
-        .attr("dominant-baseline", "hanging")
-        .style("font-size", title_position.width / 10)
-        .attr("text-anchor", "middle")
-        .text("数据选择")
+    // this.title.append("text")
+    //     .attr("x", title_position.width / 2)
+    //     .attr("y", title_position.height * 0.2)
+    //     .attr("dominant-baseline", "hanging")
+    //     .style("font-size", title_position.width / 10)
+    //     .attr("text-anchor", "middle")
+    //     .text("数据选择")
 
 };
 // DataPanel.prototype.load_place_color = function(){

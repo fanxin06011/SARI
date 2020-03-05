@@ -25,6 +25,11 @@ function Line(Observer) {
         .attr("width", width)
         .attr("height", height);
 
+    let cal_option,      // ['new', 'accu']
+        cmp_option,      // ['separate', 'diff']
+        display_option;  // ['abs', 'per']
+
+
     $('input[name="line"]').change(function () {
         lineType = ($(this).attr("id"));
         drawLines();
@@ -45,6 +50,10 @@ function Line(Observer) {
 		console.log('all population', population);
 		return {'Recovered': R, 'Unknown': U, 'Infectious': I};
 	}
+
+	function handle_modle_data(model_data){
+        
+    }
 
     function drawLines() {
         svg.selectAll("*").remove();
