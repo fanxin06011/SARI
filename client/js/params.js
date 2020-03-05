@@ -214,52 +214,62 @@ function Params(Observer){
 
 		// 设置点击事件
 		$("#pre_model").click(function(event){
-			var first_index = all_useful_model.indexOf(model_arr[0]);
-			if(first_index > 0){
-				if(model_arr.length == 4){
-					model_arr = model_arr.slice(0, model_arr.length - 1);
-					model_arr.splice(0, 0, all_useful_model[first_index - 1]);
-					current_arr = [1, 2, 3, 4];
-				}
-				else{
-					model_arr.splice(0, 0, all_useful_model[first_index - 1]);
-					current_arr = new Array();
-					for(var i = 1; i <= model_arr.length; i++){
-						current_arr.push(i);
+			if(has_saved == false){
+				alert("模型未保存！");
+			}
+			else{
+				var first_index = all_useful_model.indexOf(model_arr[0]);
+				if(first_index > 0){
+					if(model_arr.length == 4){
+						model_arr = model_arr.slice(0, model_arr.length - 1);
+						model_arr.splice(0, 0, all_useful_model[first_index - 1]);
+						current_arr = [1, 2, 3, 4];
 					}
-				}
-				for(var i = 0; i < model_arr.length; i++){
-					$("#row1_col" + (i + 1)).empty();
-					$("#row1_col" + (i + 1)).html("<div class='modelSave'><button class='model_btn' name='" + model_arr[i] + "'  id='modelSave" + model_arr[i] + "'><i class='iconfont model_icon'>&#xe636;</i></button></div>")
-					$("#text" + (i + 1)).text("模型" + model_arr[i]);
-					$("#row1_col" + (i + 1)).css("background-color", "#fff");
-					$("#row2_col" + (i + 1)).css("background-color", "#fff");
-					$(".model_icon").css("font-size", ($("#middle-top-div").height())/2 + "px");
-					all_models["model" + model_arr[i]].current_index = i + 1;
-					document.getElementById("modelSave" + model_arr[i]).onclick=function(){
-						operate_model(Number(this.name));
+					else{
+						model_arr.splice(0, 0, all_useful_model[first_index - 1]);
+						current_arr = new Array();
+						for(var i = 1; i <= model_arr.length; i++){
+							current_arr.push(i);
+						}
+					}
+					for(var i = 0; i < model_arr.length; i++){
+						$("#row1_col" + (i + 1)).empty();
+						$("#row1_col" + (i + 1)).html("<div class='modelSave'><button class='model_btn' name='" + model_arr[i] + "'  id='modelSave" + model_arr[i] + "'><i class='iconfont model_icon'>&#xe636;</i></button></div>")
+						$("#text" + (i + 1)).text("模型" + model_arr[i]);
+						$("#row1_col" + (i + 1)).css("background-color", "#fff");
+						$("#row2_col" + (i + 1)).css("background-color", "#fff");
+						$(".model_icon").css("font-size", ($("#middle-top-div").height())/2 + "px");
+						all_models["model" + model_arr[i]].current_index = i + 1;
+						document.getElementById("modelSave" + model_arr[i]).onclick=function(){
+							operate_model(Number(this.name));
+						}
 					}
 				}
 			}
 		});
 		$("#later_model").click(function(event){
-			if(model_arr.length == 4){
-				var last_index = all_useful_model.indexOf(model_arr[3]);
-				if(last_index < all_useful_model.length - 1){
-					model_arr = model_arr.slice(1, model_arr.length);
-					model_arr.push(all_useful_model[last_index + 1]);
-					current_arr = [1, 2, 3, 4];
-				}
-				for(var i = 0; i < model_arr.length; i++){
-					$("#row1_col" + (i + 1)).empty();
-					$("#row1_col" + (i + 1)).html("<div class='modelSave'><button class='model_btn' name='" + model_arr[i] + "'  id='modelSave" + model_arr[i] + "'><i class='iconfont model_icon'>&#xe636;</i></button></div>")
-					$("#text" + (i + 1)).text("模型" + model_arr[i]);
-					$("#row1_col" + (i + 1)).css("background-color", "#fff");
-					$("#row2_col" + (i + 1)).css("background-color", "#fff");
-					$(".model_icon").css("font-size", ($("#middle-top-div").height())/2 + "px");
-					all_models["model" + model_arr[i]].current_index = i + 1;
-					document.getElementById("modelSave" + model_arr[i]).onclick=function(){
-						operate_model(Number(this.name));
+			if(has_saved == false){
+				alert("模型未保存！");
+			}
+			else{
+				if(model_arr.length == 4){
+					var last_index = all_useful_model.indexOf(model_arr[3]);
+					if(last_index < all_useful_model.length - 1){
+						model_arr = model_arr.slice(1, model_arr.length);
+						model_arr.push(all_useful_model[last_index + 1]);
+						current_arr = [1, 2, 3, 4];
+					}
+					for(var i = 0; i < model_arr.length; i++){
+						$("#row1_col" + (i + 1)).empty();
+						$("#row1_col" + (i + 1)).html("<div class='modelSave'><button class='model_btn' name='" + model_arr[i] + "'  id='modelSave" + model_arr[i] + "'><i class='iconfont model_icon'>&#xe636;</i></button></div>")
+						$("#text" + (i + 1)).text("模型" + model_arr[i]);
+						$("#row1_col" + (i + 1)).css("background-color", "#fff");
+						$("#row2_col" + (i + 1)).css("background-color", "#fff");
+						$(".model_icon").css("font-size", ($("#middle-top-div").height())/2 + "px");
+						all_models["model" + model_arr[i]].current_index = i + 1;
+						document.getElementById("modelSave" + model_arr[i]).onclick=function(){
+							operate_model(Number(this.name));
+						}
 					}
 				}
 			}
