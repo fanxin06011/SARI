@@ -6,6 +6,7 @@
     <!-- css library -->
 	<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="./css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="./css/buttons.css">
     <link rel="stylesheet" type="text/css" href="./css/icheck/aero.css">
     <link rel="stylesheet" type="text/css" href="./css/d3tip-example-styles.css">
@@ -15,8 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="./css/bootstrap-slider.css">
 	<link rel="stylesheet" type="text/css" href="css/panel_liucan.css">
 	<link rel="stylesheet" type="text/css" href="css/line.css"/>
-
-
+	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.css">
 
     <!-- js library -->
     <script src="jslib/jquery.min.js"></script>
@@ -46,7 +46,50 @@
 	<div id="middle-div" class="outer-div">
 		<div id="model_build" class="text_div">模型构建</div>
 		<div id="middle-top-div">
-			
+			<div id="left_arrow">
+				<button class="arrow_btn" id="pre_model"><i class="iconfont iconleft_arrow"></i></button>
+			</div>
+			<div id="model_save">
+				<table border="0" width="100%">
+					<tr>
+						<!-- <td width="20%" align="center"> 
+							<div class="modelSave" id="modelSave0">
+								<button class="model_btn"><i class="iconfont model_icon">&#xe636;</i></button>
+							</div>
+						</td> -->
+						<td width="20%" align="center" id="row1_col1">
+						</td>
+						<td width="20%" align="center" id="row1_col2"></td>
+						<td width="20%" align="center" id="row1_col3"></td>
+						<td width="20%" align="center" id="row1_col4"></td>
+						<td width="20%" align="center" id="row1_col5">
+							<div class="modelSave">
+								<button class="model_btn" id="add_model"><i class="iconfont model_icon">&#xe71f;</i></button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%" align="center"  id="row2_col1">
+							<span id="text1"></span>
+						</td>
+						<td width="20%" align="center" id="row2_col2">
+							<span id="text2"></span>
+						</td>
+						<td width="20%" align="center" id="row2_col3">
+							<span id="text3"></span>
+						</td>
+						<td width="20%" align="center" id="row2_col4">
+							<span id="text4"></span>
+						</td>
+						<td width="20%" align="center" id="row2_col5">
+							<span id="text5">新建</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="right_arrow">
+				<button class="arrow_btn" id="later_model"><i class="iconfont iconright_arrow"></i></button>
+			</div>
 		</div>
 
 		<div id="middle-bottom-div">
@@ -86,7 +129,7 @@
 				</tr>
 			</table>
 			<div id="model_param">
-				<table border="0" width="100%">
+				<table border="0" width="100%" id="parameters_table">
 					<tr>
 						<td><span>&nbsp; &nbsp; 感染率 &#946;:</span></td>	
 						<td class="td_parameter"><input type="text" class="parameter" id="cur_infectRate" name="infectRate" value=0.8></td>
@@ -169,20 +212,20 @@
 						</td>
 					</tr>
 					<tr>
-						<td><span>&nbsp; &nbsp; 初始易感数 S<sub>0</sub>:</span></td>
+						<td><span>&nbsp; &nbsp; 初始易感比例 S<sub>0</sub>:</span></td>
 						<td class="td_parameter"><input type="text" class="parameter" id="cur_initSusceptibleNum" name="initSusceptibleNum" value=10000></td>
 						<td>
 							<input  id="initSusceptibleNum" data-slider-id="ex1Slider" type="text"
-								data-slider-min="0" data-slider-max="100000" data-slider-step="1"
-								data-slider-value="10000"/>
+								data-slider-min="0" data-slider-max="10000" data-slider-step="1"
+								data-slider-value="1"/>
 						</td>
 					</tr>
 					<tr id="tr_initIncubatedNum">
-						<td><span>&nbsp; &nbsp; 初始潜伏数 E<sub>0</sub>:</span></td>
+						<td><span>&nbsp; &nbsp; 初始潜伏比例 E<sub>0</sub>:</span></td>
 						<td class="td_parameter"><input type="text" class="parameter" id="cur_initIncubatedNum" name="initIncubatedNum" value=0></td>
 						<td>
 							<input  id="initIncubatedNum" data-slider-id="ex1Slider" type="text"
-								data-slider-min="0" data-slider-max="100000" data-slider-step="1"
+								data-slider-min="0" data-slider-max="10000" data-slider-step="1"
 								data-slider-value="0"/>
 						</td>
 					</tr>
@@ -225,6 +268,13 @@
 					</tr>
 				</table>
 			</div>
+			<table border="0" width="100%" id="op_button">
+				<tr>
+					<td align="center"><button type="button" id="Save">保存</button></td>
+					<td align="center"><button type="button" id="Cancel">取消</button></td>
+					<td align="center"><button type="button" id="Delete">删除</button></td>
+				</tr>
+			</table>
 		</div>
 	</div>
 	<div id="right-div" class="outer-div">
