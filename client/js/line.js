@@ -1,5 +1,4 @@
 function Line(Observer) {
-    console.log('yese aheofihweeoifwoeif');
     var line = {};
 
     var $brtDiv = $("#line-div");
@@ -25,15 +24,57 @@ function Line(Observer) {
         .attr("width", width)
         .attr("height", height);
 
-    let cal_option,      // ['new', 'accu']
-        cmp_option,      // ['separate', 'diff']
-        display_option;  // ['abs', 'per']
+    let cal_option = 'accu',      // ['new', 'accu']
+        cmp_option = 'separate',      // ['separate', 'diff']
+        display_option = 'abs';  // ['abs', 'per']
+
+    cal_params_changed();
+    cmp_params_changed();
+    display_params_changed();
+    d3.selectAll('tr#data-cal button').on('click', function(){
+            cal_option = d3.select(this).attr('cal-option');
+            cal_params_changed();
+        });
+    d3.selectAll('tr#data-cmp button').on('click', function(){
+        cmp_option = d3.select(this).attr('cmp-option');
+        cmp_params_changed();
+    });
+    d3.selectAll('tr#data-display button').on('click', function(){
+        display_option = d3.select(this).attr('display-option');
+        display_params_changed();
+    });
 
 
     $('input[name="line"]').change(function () {
         lineType = ($(this).attr("id"));
         drawLines();
     });
+
+    function cal_params_changed(){
+        d3.selectAll('tr#data-cal button').classed('option-selected', function(){
+            return d3.select(this).attr('cal-option') === cal_option;
+        });
+    }
+
+    function cmp_params_changed(){
+        d3.selectAll('tr#data-cmp button').classed('option-selected', function(){
+            return d3.select(this).attr('cmp-option') === cmp_option;
+        });
+    }
+
+    function display_params_changed(){
+        d3.selectAll('tr#data-display button').classed('option-selected', function(){
+            return d3.select(this).attr('display-option') === display_option;
+        });
+    }
+
+    function get_diff_data(arr){
+        let ans = [arr[0]];
+        for (let i = 1; i < arr.length; ++i){
+            ans.push(arr[i] - arr[i - 1]);
+        }
+        return ans;
+    }
 
     function handle_ture_data(true_data){
 		let population = 0;
@@ -48,11 +89,20 @@ function Line(Observer) {
 		let R = true_data.cure_accu.slice(left, right + 1).map((d, i) => d + true_data.dead_accu.slice(left, right + 1)[i]);
 		let U = I.map((d, i) => population - I[i] - R[i]);
 		console.log('all population', population);
+		if (cmp_option === 'diff'){
+		    I = get_diff_data(I);
+		    R = get_diff_data(R);
+		    U = get_diff_data(U);
+        }
 		return {'Recovered': R, 'Unknown': U, 'Infectious': I};
 	}
 
 	function handle_modle_data(model_data){
-        
+        if (cmp_option === 'diff'){
+            I = get_diff_data(I);
+            R = get_diff_data(R);
+            U = get_diff_data(U);
+        }
     }
 
     function drawLines() {

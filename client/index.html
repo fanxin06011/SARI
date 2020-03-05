@@ -291,9 +291,9 @@
 <!--	</div>-->
 	<div id="right-div" class="outer-div">
 		<div id="model_output" class="text_div">模型输出</div>
-		<div class="line-panel">
+		<div id="line-panel">
 			<table class="table table-borderless table-sm">
-				<tr>
+				<tr id="data-source">
 					<td>数据来源</td>
 					<td>
 						<div class="form-row">
@@ -316,7 +316,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr>
+				<tr id="data-cal">
 					<td>数据计量</td>
 					<td>
 						<button type="button" cal-option="new">新增</button>
@@ -325,7 +325,7 @@
 						<button type="button" cal-option="accu">累计</button>
 					</td>
 				</tr>
-				<tr>
+				<tr id="data-cmp">
 					<td>数据比较</td>
 					<td>
 						<button type="button" cmp-option="separate">并列</button>
@@ -334,7 +334,7 @@
 						<button type="button" cmp-option="diff">A-B</button>
 					</td>
 				</tr>
-				<tr>
+				<tr id="data-display">
 					<td>数据显示</td>
 					<td>
 						<button type="button" display-option="abs">绝对值</button>

@@ -22,8 +22,5 @@
 
 #right-div button.option-selected{
     background-color: #666;
-}
-
-#right-div button:hover{
-
+    color: white;
 }
