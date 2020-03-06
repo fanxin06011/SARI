@@ -155,7 +155,7 @@ function Params(Observer){
 			}
 		}
 		// 
-		if((("model" + current_model) == model1.type) || (("model" + current_model) == model2.type)){
+		if((current_model === parseInt(model1.type)) || (current_model === parseInt(model2.type))){
 			params.getdata([model1.type, model2.type]);
 		}
 	}
@@ -382,13 +382,22 @@ function Params(Observer){
 		let objs = {data: []};
 		for (let model_name of model_name_list){
 			if (model_name !== 'empty' && model_name !== 'true_data'){
-				let used_model = all_models['model' + model_name];
-				console.log('used model', used_model)
 				let obj = {};
-				obj.type = used_model.model_type;
-				obj.params = used_model.parameters;
-				obj.params.duration = duration;
+				if (parseInt(model_name) !== current_model) {
+					let used_model = all_models['model' + model_name];
+					console.log('used model', used_model)
+					obj.type = used_model.model_type;
+					obj.params = used_model.parameters;
+					obj.params.duration = duration;
+				}
+				else{
+					let obj = {};
+					obj.type = parseInt(document.getElementById("modelUsed").value);
+					obj.params = tmp_parameter;
+					obj.params.duration = duration;
+				}
 				objs.data.push(obj);
+				console.log('params', obj.params)
 			}
 		}
 		console.log('model name list', model_name_list);

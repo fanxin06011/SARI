@@ -500,7 +500,7 @@ function Line(Observer) {
                         if (i === 0) return '10, 0';
                         else return '4, 4'
                     })
-            })
+            });
         // let data_groups = lineg.selectAll('g')
         //     .data(data_collection)
         //     .enter()
@@ -606,6 +606,9 @@ function Line(Observer) {
             drawLines();
         }
         else if (message === 'add_model'){
+            reload_all_models();
+        }
+        else if (message === 'delete_model'){
             reload_all_models();
         }
     };
