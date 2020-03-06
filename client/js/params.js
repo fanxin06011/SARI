@@ -154,7 +154,15 @@ function Params(Observer){
 				}
 			}
 		}
-		// 
+
+		all_models["model" + current_model].saved = false;
+		all_models["model" + current_model].model_type = parseInt(document.getElementById("modelUsed").value);
+		let params = {};
+		for(var i = 0; i < paramsIdArr.length; i++){
+			params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
+		}
+		all_models["model" + current_model].tmp_parameter = params;
+
 		if((("model" + current_model) == model1.type) || (("model" + current_model) == model2.type)){
 			params.getdata([model1.type, model2.type]);
 		}
@@ -233,6 +241,13 @@ function Params(Observer){
 			let event_name = "update_data_range";
 	
 			var newtype=parseInt(document.getElementById("modelUsed").value);
+			all_models["model" + current_model].saved = false;
+			all_models["model" + current_model].model_type = parseInt(document.getElementById("modelUsed").value);
+			let params = {};
+			for(var i = 0; i < paramsIdArr.length; i++){
+				params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
+			}
+			all_models["model" + current_model].tmp_parameter = params;
 			// Observer.fireEvent(event_name, newtype, params);
 
 			if(modelUsed!=newtype){
@@ -318,6 +333,7 @@ function Params(Observer){
 				params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
 			}
 			all_models["model" + current_model].parameters = params;
+			all_models["model" + current_model].tmp_parameter = params;
 		});
 		$("#Cancel").click(function(event){
 			if(has_saved == false){
@@ -669,7 +685,7 @@ function Params(Observer){
 					for(var i = 0; i < paramsIdArr.length; i++){
 						params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
 					}
-					all_models["model" + model_num].parameters = params;
+					all_models["model" + model_num].tmp_parameter = params;
 					document.getElementById("modelSave1").onclick=function(){
 						operate_model(Number(this.name));
 					}
@@ -743,7 +759,7 @@ function Params(Observer){
 						for(var i = 0; i < paramsIdArr.length; i++){
 							params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
 						}
-						all_models["model" + model_num].parameters = params;
+						all_models["model" + model_num].tmp_parameter = params;
 					}
 					else{
 						alert("模型未保存！");
