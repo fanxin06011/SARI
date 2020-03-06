@@ -125,7 +125,7 @@ function Params(Observer){
 				}
 			}
 		}
-		params.getdata();
+		// params.getdata();
 	}
 
 	var modelUsed=parseInt(document.getElementById("modelUsed").value);
@@ -345,26 +345,68 @@ function Params(Observer){
 		});
 	});
 
-	params.getdata=function(){
-		let obj = {};
-		obj.type=parseInt(document.getElementById("modelUsed").value);
-		let tmpparam={};
-		var modelUsed=parseInt(document.getElementById("modelUsed").value);
-		for(var i=0;i<paramsIdArr.length;i++){
-			tmpparam[paramsIdArr[i]]=parseFloat($('#'+paramsIdArr[i]).val())
+	params.getdata=function(model_name_list){
+		let objs = {data: []};
+		for (let model_name of model_name_list){
+			if (model_name !== 'empty' && model_name !== 'true_data'){
+				let used_model = all_models['model' + model_name];
+				console.log('used model', used_model)
+				let obj = {};
+				obj.type = used_model.model_type;
+				obj.params = used_model.parameters;
+				obj.params.duration = duration;
+				objs.data.push(obj);
+			}
 		}
-		tmpparam['duration']=duration;
-		obj.params=JSON.stringify(tmpparam);
+		console.log('model name list', model_name_list);
+		console.log('objs', objs);
+		// let obj = {};
+		// obj.type=parseInt(document.getElementById("modelUsed").value);
+		// let tmpparam={};
+		// var modelUsed=parseInt(document.getElementById("modelUsed").value);
+		// for(var i=0;i<paramsIdArr.length;i++){
+		// 	tmpparam[paramsIdArr[i]]=parseFloat($('#'+paramsIdArr[i]).val())
+		// }
+		// tmpparam['duration']=duration;
+		// obj.params=JSON.stringify(tmpparam);
+		objs.data = JSON.stringify(objs.data);
 		$.ajax({
 			type: 'GET',
 			url: 'SEIR',
-			data: obj,
+			data: objs,
 			dataType: 'json',
 			success: function(model_data) {
-				Observer.fireEvent("showResult",[true_data,model_data],params);
+				let data = {data: [], time_range: true_data.time, area: true_data.area};
+				let idx = 0;
+				for (i = 0; i < 2; ++i){
+					if (model_name_list[i] === 'empty'){
+						data.data.push([]);
+					}
+					else if (model_name_list[i] === 'true_data'){
+						data.data.push(true_data);
+					}
+					else{
+						data.data.push(model_data[idx]);
+						++idx;
+					}
+				}
+				Observer.fireEvent("showResult",data,params);
 			},
 			error: function(jqXHR) {
-				Observer.fireEvent('showResult', [true_data, []], params);
+				let data = {data: [], time_range: true_data.time, area: true_data.area};
+				let idx = 0;
+				for (i = 0; i < 2; ++i){
+					if (model_name_list[i] === 'empty'){
+						data.data.push([]);
+					}
+					else if (model_name_list[i] === 'true_data'){
+						data.data.push(true_data);
+					}
+					else{
+						data.data.push([]);
+					}
+				}
+				Observer.fireEvent("showResult",data,params);
 				console.log('post error!!', jqXHR);
 			},
 		});
@@ -422,13 +464,15 @@ function Params(Observer){
 				// data.area 一个字典，表示各个省份是否被选中，选中为true， 不选中为false
 				// data.new 每日新增的数组，从第0天到最后一天。
 				// data.accu 每日的累加数组，从第0天到最后一天。
-				duration=data.time["right"]-data.time["left"];
-				true_data=data;
+				duration=data.true_data.time["right"]-data.true_data.time["left"];
+				true_data=data.true_data;
+				console.log('true data', true_data)
 			}
 			else{
 				console.log("change_model");
 			}
 			var area_choose = true_data.area;
+			console.log('area choose', true_data.area)
 			var areas = Object.keys(area_choose);
 			var true_area = new Array();
 			for(var i = 0; i < areas.length; i++){
@@ -564,7 +608,7 @@ function Params(Observer){
 				}
 				Sus_I = parseFloat($('#initSusceptibleNum').val()) + parseFloat($('#initInfectedNum').val());
 			}
-			params.getdata();
+			params.getdata(data.model_names);
 		}
 		if(message==="add_model"){
 			if(from === params){

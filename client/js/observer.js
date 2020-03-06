@@ -6,10 +6,11 @@ function Observer() {
         viewList.push(view);
     };
     observer.fireEvent = function(message, data, from) {
+        console.log('view list', viewList)
         viewList.forEach(function(view) {
-            if (view.hasOwnProperty('onMessage')) {
+            // if (view.hasOwnProperty('onMessage')) {
                 view.onMessage(message, data, from);
-            }
+            // }
 
         })
     };

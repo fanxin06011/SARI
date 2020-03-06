@@ -29,79 +29,85 @@ def list_add(a, b):
 
 class SEIR(tornado.web.RequestHandler):
     def get(self):
-        type = json.loads(self.get_argument('type'))
-        params = json.loads(self.get_argument('params'))
-        print(type, params)
-        evt_unpacked={}
+        models = json.loads(self.get_argument('data'))
+        print(models)
+        rsp = []
+        for model in models:
+            # type = json.loads(self.get_argument('type'))
+            # params = json.loads(self.get_argument('params'))
+            print(model)
+            type = model['type']
+            params = model['params']
+            print(type, params)
+            evt_unpacked={}
 
-        if type == 0:
-            # coefficient of infection
-            beta = params['infectRate']
-            # coefficient of recovery
-            gamma = params['recoverRate']
-            # nb of infectious at the beginning
-            I_0 = params['initInfectedNum']
-            # nb of recovered at the beginning
-            R_0 = params['initRecoverNum']
-            S_0 = params['initSusceptibleNum']
-            N = S_0 + I_0 + R_0
-            # duration
-            T = params['duration']
-            Susceptible, Infectious, Recovered = SIR_result(N, I_0, R_0, beta, gamma, T)
-            evt_unpacked = {'Unknown': Susceptible, 'Infectious': Infectious,
-                            'Recovered': Recovered}
+            if type == 0:
+                # coefficient of infection
+                beta = params['infectRate']
+                # coefficient of recovery
+                gamma = params['recoverRate']
+                # nb of infectious at the beginning
+                I_0 = params['initInfectedNum']
+                # nb of recovered at the beginning
+                R_0 = params['initRecoverNum']
+                S_0 = params['initSusceptibleNum']
+                N = S_0 + I_0 + R_0
+                # duration
+                T = params['duration']
+                Susceptible, Infectious, Recovered = SIR_result(N, I_0, R_0, beta, gamma, T)
+                evt_unpacked = {'Unknown': Susceptible, 'Infectious': Infectious,
+                                'Recovered': Recovered}
+            elif type==1:
+                # coefficient of infection
+                beta = params['infectRate']
+                # coefficient of recovery
+                gamma = params['recoverRate']
+                # coefficient from exposed to infectious
+                sigma = params['sigma']
+                # nb of infectious at the beginning
+                I_0 = params['initInfectedNum']
+                # nb of exposed at the beginning
+                E_0 = params['initIncubatedNum']
+                # nb of recovered at the beginning
+                R_0 = params['initRecoverNum']
+                S_0 = params['initSusceptibleNum']
+                # nb of population
+                N = S_0 + I_0 + E_0 + R_0
+                # duration
+                T = params['duration']
+                Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T)
+                evt_unpacked = {'Unknown': list_add(Susceptible, Exposed), 'Infectious': Infectious,
+                                'Recovered': Recovered}
+            else:
+                # coefficient of infection
+                beta = params['infectRate']
+                # coefficient of recovery
+                gamma = params['recoverRate']
+                # coefficient from exposed to infectious
+                sigma = params['sigma']
+                mu = params['mu']
+                gamma_1 = params['gamma_1']
+                gamma_2 = params['gamma_2']
+                delta_1 = params['delta_1']
+                delta_2 = params['delta_2']
 
+                # nb of infectious at the beginning
+                I_0 = params['initInfectedNum']
+                # nb of recovered at the beginning
+                R_0 = params['initRecoverNum']
+                S_0 = params['initSusceptibleNum']
+                J_0 = params['initConfirmNum']
+                D_0 = params['initDeadNum']
+                N = S_0 + I_0 + R_0 + J_0 + D_0
+                # duration
+                T = params['duration']
+                Susceptible, Infectious, Diagnosed, Dead, Recovered = SIJR_result(N, I_0, D_0, R_0, J_0, mu, sigma, beta,
+                                                                                  gamma_1, gamma_2, delta_1, delta_2, T)
+                evt_unpacked = {'Unknown': list_add(Susceptible, Infectious), 'Infectious': Diagnosed, 'Recovered': list_add(Dead, Recovered)}
+            rsp.append(evt_unpacked)
 
-        elif type==1:
-            # coefficient of infection
-            beta = params['infectRate']
-            # coefficient of recovery
-            gamma = params['recoverRate']
-            # coefficient from exposed to infectious
-            sigma = params['sigma']
-            # nb of infectious at the beginning
-            I_0 = params['initInfectedNum']
-            # nb of exposed at the beginning
-            E_0 = params['initIncubatedNum']
-            # nb of recovered at the beginning
-            R_0 = params['initRecoverNum']
-            S_0 = params['initSusceptibleNum']
-            # nb of population
-            N = S_0 + I_0 + E_0 + R_0
-            # duration
-            T = params['duration']
-            Susceptible, Exposed, Infectious, Recovered = SEIR_result(N, I_0, E_0, R_0, beta, gamma, sigma, T)
-            evt_unpacked = {'Unknown': list_add(Susceptible, Exposed), 'Infectious': Infectious,
-                            'Recovered': Recovered}
-
-        else:
-            # coefficient of infection
-            beta = params['infectRate']
-            # coefficient of recovery
-            gamma = params['recoverRate']
-            # coefficient from exposed to infectious
-            sigma = params['sigma']
-            mu = params['mu']
-            gamma_1 = params['gamma_1']
-            gamma_2 = params['gamma_2']
-            delta_1 = params['delta_1']
-            delta_2 = params['delta_2']
-
-            # nb of infectious at the beginning
-            I_0 = params['initInfectedNum']
-            # nb of recovered at the beginning
-            R_0 = params['initRecoverNum']
-            S_0 = params['initSusceptibleNum']
-            J_0 = params['initConfirmNum']
-            D_0 = params['initDeadNum']
-            N = S_0 + I_0 + R_0 + J_0 + D_0
-            # duration
-            T = params['duration']
-            Susceptible, Infectious, Diagnosed, Dead, Recovered = SIJR_result(N, I_0, D_0, R_0, J_0, mu, sigma, beta,
-                                                                              gamma_1, gamma_2, delta_1, delta_2, T)
-            evt_unpacked = {'Unknown': list_add(Susceptible, Infectious), 'Infectious': Diagnosed, 'Recovered': list_add(Dead, Recovered)}
-
-        evt = json.dumps(evt_unpacked)
+        # evt = json.dumps(evt_unpacked)
+        evt = json.dumps(rsp)
         self.write(evt)
 
 

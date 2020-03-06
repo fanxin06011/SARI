@@ -594,14 +594,38 @@ DataPanel.prototype.send_message = function () {
     };
     console.log('send data', send_data);
     let event_name = "update_data_range";
-    obs.fireEvent(event_name, send_data, this)
+    obs.fireEvent(event_name, {true_data: send_data, model_names: ['true_data', 'empty']}, this)
+};
+
+
+DataPanel.prototype.onMessage = function(message, data, from){
+    console.log(' dsf', message)
+    if (message === 'select_model'){
+        console.log('data panel received')
+        let event_name = 'update_data_range';
+        let send_data = {
+            true_data: {
+                time: this.date_range,
+                area: this.place_is_choose,
+                diagnosed_accu: this.get_data(this.data.accu),
+                cure_accu: this.get_data(this.data.cure.accu),
+                dead_accu: this.get_data(this.data.dead.accu),
+                diagnosed_new: this.get_data(this.data.new),
+                cure_new: this.get_data(this.data.cure.new),
+                dead_new: this.get_data(this.data.dead.new),
+                original_data: this.data
+            },
+            model_names: data
+        };
+        obs.fireEvent(event_name, send_data, this);
+    }
 };
 
 
 // let ncpdata = new NCPdata()
 let panel;
 let NCPdata = function () {
-    url = "https://tanshaocong.github.io/2019-nCoV/map.csv"
+    url = "https://tanshaocong.github.io/2019-nCoV/map.csv";
     d3.csv(url, function (error, original_data) {
     	// let special = ["全国", "仅湖北", "除湖北"];
         let places = ['北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', '江苏',
@@ -624,6 +648,8 @@ let NCPdata = function () {
         panel.load_time();
         panel.load_range(places);
         panel.send_message();
+
+        obs.addView(panel);
 
         // // 获得时间范围：
         // console.log(panel.date_range) // 从第一天开始为0.
