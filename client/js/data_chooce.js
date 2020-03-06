@@ -594,7 +594,7 @@ DataPanel.prototype.send_message = function () {
     };
     console.log('send data', send_data);
     let event_name = "update_data_range";
-    obs.fireEvent(event_name, {true_data: send_data, model_names: ['true_data', 'empty']}, this)
+    obs.fireEvent(event_name, {true_data: send_data, model_names: [model1.type, model2.type]}, this)
 };
 
 

@@ -1,3 +1,165 @@
+let cal_option = 'accu',      // ['new', 'accu']
+    cmp_option = 'separate',      // ['separate', 'diff']
+    display_option = 'abs';  // ['abs', 'per']
+
+class Model{
+        constructor(type, keys) {
+            /**
+             * @type: empty, true_data or model_name
+             */
+            this.type = type;
+            this.keys = keys;
+            this.keys_set = new Set(this.keys);
+
+            this.handled_accu_data = null;
+            this.handled_new_data = null;
+            // this.data = data;
+            // this.time_range = time_range;
+            // this.n_days = time_range[1] - time_range[0] + 1;
+            // this.status = 'loaded';   // status: loaded or waiting. if waiting, this.data will be filled with incoming new data
+
+            // if (type === 'true_data'){
+            //     this.handled_data = this.handle_ture_data(this.data);
+            // }
+            // else if (type === 'empty'){
+            //     this.handled_data = this.handle_empty_data(this.data);
+            // }
+            // else{
+            //     this.handled_data = this.handle_model_data(this.data);
+            // }
+            this.sort = function(data, f){
+                if (f === null){
+                    return data.sort();
+                }
+                else{
+                    data.sort((a, b) => f(a) < f(b) ? -1 : 1);
+                }
+                return data;
+            };
+        }
+
+        fill_data(data, time_range){
+            console.log('time range', time_range)
+            this.data = data;
+            this.time_range = time_range;
+            this.n_days = time_range.right - time_range.left + 1;
+            this.handle_data();
+        }
+
+        handle_data(){
+            if (this.type === 'true_data'){
+                [this.handled_accu_data, this.handled_new_data] = this.handle_ture_data(this.data);
+            }
+            else if (this.type === 'empty'){
+                [this.handled_accu_data, this.handled_new_data] = this.handle_empty_data(this.data);
+            }
+            else{
+                [this.handled_accu_data, this.handled_new_data] = this.handle_model_data(this.data);
+            }
+        }
+
+        get_pairs(){
+            let pairs_data;
+            if (display_option === 'per'){
+                let data_per = {};
+                for (let k of this.keys){
+                    data_per[k] = [];
+                }
+                let sum_tmp = 0;
+
+                console.log('these days', this.n_days);
+                for (let i = 0; i < this.n_days; i++) {
+                    // true data
+                    sum_tmp = 0;
+                    for (let key in this.handled_accu_data) {
+                        if (this.handled_accu_data.hasOwnProperty(key)) {
+                            sum_tmp = sum_tmp + this.handled_accu_data[key][i];
+                        }
+                    }
+                    console.log('sum tmp', sum_tmp)
+                    for (let key of this.keys) {
+                        if (this.handled_accu_data.hasOwnProperty(key)) {
+                            if (cal_option === 'accu') {
+                                data_per[key].push(this.handled_accu_data[key][i] / sum_tmp);
+                            }
+                            else{
+                                data_per[key].push(this.handled_new_data[key][i] / sum_tmp);
+                            }
+                        }
+                    }
+                }
+                console.log('dataper', data_per)
+                pairs_data = Object.entries(data_per);
+            }
+            else{
+                if (cal_option === 'accu'){
+                    pairs_data = Object.entries(this.handled_accu_data).filter(d => this.keys_set.has(d[0]));
+                }
+                else{
+                    pairs_data = Object.entries(this.handled_new_data).filter(d => this.keys_set.has(d[0]));
+                }
+            }
+            pairs_data = this.sort(pairs_data, d => d[0]);
+            return pairs_data;
+        }
+
+        handle_ture_data(true_data){
+            let population = 0;
+            for (let province in province_population){
+                if (province === '全国' || province === '其他') continue;
+                if (true_data.area[province]){
+                    population += province_population[province];
+                }
+            }
+            let {left, right} = true_data.time;
+            let I = true_data.diagnosed_accu.slice(left, right + 1);
+            let R = true_data.cure_accu.slice(left, right + 1).map((d, i) => d + true_data.dead_accu.slice(left, right + 1)[i]);
+            let U = I.map((d, i) => population - I[i] - R[i]);
+            let new_I = this.get_new_data(I);
+            let new_R = this.get_new_data(R);
+            let new_U = this.get_new_data(U);
+            // if (cal_option === 'new'){
+            //     I = this.get_new_data(I);
+            //     R = this.get_new_data(R);
+            //     U = this.get_new_data(U);
+            // }
+            return [{'Recovered': R, 'Unknown': U, 'Infectious': I}, {'Recovered': new_R, 'Unknown': new_U, 'Infectious': new_I}];
+        }
+
+        handle_model_data(model_data){
+            let I, R, U;
+            I = this.get_new_data(model_data['Infectious']);
+            R = this.get_new_data(model_data['Recovered']);
+            U = this.get_new_data(model_data['Unknown']);
+            return [model_data, {'Recovered': R, 'Unknown': U, 'Infectious': I}];  // [accu, new]
+            // if (cal_option === 'new'){
+            //     I = this.get_new_data(model_data['Infectious']);
+            //     R = this.get_new_data(model_data['Recovered']);
+            //     U = this.get_new_data(model_data['Unknown']);
+            //     return {'Recovered': R, 'Unknown': U, 'Infectious': I};
+            // }
+            // else return model_data;
+        }
+
+        handle_empty_data(empty_data){
+            return [{'Recovered': [], 'Unknown': [], 'Infectious': []}, {'Recovered': [], 'Unknown': [], 'Infectious': []}];
+        }
+
+        get_new_data(arr){
+            let ans = [arr[0]];
+            for (let i = 1; i < arr.length; ++i){
+                ans.push(arr[i] - arr[i - 1]);
+            }
+            return ans;
+        }
+    }
+
+let keys = ['Recovered', 'Infectious'];
+let model1 = new Model('true_data', keys), model2 = new Model('empty', keys);  // model loaded from the database or true_data
+let modellist = [model1, model2];
+let model_code = ['A', 'B'];
+
+
 function Line(Observer) {
     var line = {};
 
@@ -15,8 +177,8 @@ function Line(Observer) {
     var lineType = "line_abs";
     var dataAll = [];
     let time_range;
-    let keys = ['Recovered', 'Infectious'];
-    let keys_set = new Set(keys);
+    // let keys = ['Recovered', 'Infectious'];
+    // let keys_set = new Set(keys);
     var colorArr = {"Recovered": "#70ad47", "Unknown": "#D7D599", "Infectious": "#ED7D31"};
     var keysMap = {"Recovered": "恢复", "Unknown": "未知", "Infectious": "确诊"};
 
@@ -25,131 +187,6 @@ function Line(Observer) {
         .attr("width", width)
         .attr("height", height);
 
-    let cal_option = 'accu',      // ['new', 'accu']
-        cmp_option = 'separate',      // ['separate', 'diff']
-        display_option = 'abs';  // ['abs', 'per']
-
-    class Model{
-        constructor(type) {
-            /**
-             * @type: empty, true_data or model_name
-             */
-            this.type = type;
-            // this.data = data;
-            // this.time_range = time_range;
-            // this.n_days = time_range[1] - time_range[0] + 1;
-            // this.status = 'loaded';   // status: loaded or waiting. if waiting, this.data will be filled with incoming new data
-
-            // if (type === 'true_data'){
-            //     this.handled_data = this.handle_ture_data(this.data);
-            // }
-            // else if (type === 'empty'){
-            //     this.handled_data = this.handle_empty_data(this.data);
-            // }
-            // else{
-            //     this.handled_data = this.handle_model_data(this.data);
-            // }
-        }
-
-        fill_data(data, time_range){
-            console.log('time range', time_range)
-            this.data = data;
-            this.time_range = time_range;
-            this.n_days = time_range.right - time_range.left + 1;
-            if (this.type === 'true_data'){
-                this.handled_data = this.handle_ture_data(this.data);
-            }
-            else if (this.type === 'empty'){
-                this.handled_data = this.handle_empty_data(this.data);
-            }
-            else{
-                this.handled_data = this.handle_model_data(this.data);
-            }
-        }
-
-        get_pairs(){
-            let pairs_data;
-            if (display_option === 'per'){
-                let data_per = {};
-                for (let k of keys){
-                    data_per[k] = [];
-                }
-                let sum_tmp = 0;
-
-                console.log('these days', this.n_days)
-                for (let i = 0; i < this.n_days; i++) {
-                    // true data
-                    sum_tmp = 0;
-                    for (let key in this.handled_data) {
-                        if (this.handled_data.hasOwnProperty(key)) {
-                            sum_tmp = sum_tmp + this.handled_data[key][i];
-                        }
-                    }
-                    console.log('sum tmp', sum_tmp)
-                    for (let key of keys) {
-                        if (this.handled_data.hasOwnProperty(key)) {
-                            data_per[key].push(this.handled_data[key][i] / sum_tmp);
-                        }
-                    }
-                }
-                console.log('dataper', data_per)
-                pairs_data = Object.entries(data_per);
-            }
-            else{
-                pairs_data = Object.entries(this.handled_data).filter(d => keys_set.has(d[0]));
-            }
-            pairs_data = my_sort(pairs_data, d => d[0]);
-            return pairs_data;
-        }
-
-        handle_ture_data(true_data){
-            let population = 0;
-            for (let province in province_population){
-                if (province === '全国' || province === '其他') continue;
-                if (true_data.area[province]){
-                    population += province_population[province];
-                }
-            }
-            let {left, right} = true_data.time;
-            let I = true_data.diagnosed_accu.slice(left, right + 1);
-            let R = true_data.cure_accu.slice(left, right + 1).map((d, i) => d + true_data.dead_accu.slice(left, right + 1)[i]);
-            let U = I.map((d, i) => population - I[i] - R[i]);
-            if (cal_option === 'new'){
-                I = get_new_data(I);
-                R = get_new_data(R);
-                U = get_new_data(U);
-            }
-            return {'Recovered': R, 'Unknown': U, 'Infectious': I};
-        }
-
-        handle_model_data(model_data){
-            if (cal_option === 'new'){
-                for (let k in model_data){
-                    if (model_data.hasOwnProperty(k)) {
-                        model_data[k] = get_new_data(model_data[k]);
-                    }
-                }
-            }
-            return model_data;
-        }
-
-        handle_empty_data(empty_data){
-            return {'Recovered': [], 'Unknown': [], 'Infectious': []};
-        }
-    }
-
-    let model1 = new Model('true_data'), model2 = new Model('empty');  // model loaded from the database or true_data
-    let modellist = [model1, model2];
-    let model_code = ['A', 'B'];
-    let my_sort = function(data, f){
-        if (f === null){
-            return data.sort();
-        }
-        else{
-            data.sort((a, b) => f(a) < f(b) ? -1 : 1);
-        }
-        return data;
-    };
 
     cal_params_changed();
     cmp_params_changed();
@@ -226,14 +263,6 @@ function Line(Observer) {
         d3.selectAll('tr#data-display button').classed('option-selected', function(){
             return d3.select(this).attr('display-option') === display_option;
         });
-    }
-
-    function get_new_data(arr){
-        let ans = [arr[0]];
-        for (let i = 1; i < arr.length; ++i){
-            ans.push(arr[i] - arr[i - 1]);
-        }
-        return ans;
     }
 
     function drawLines() {
