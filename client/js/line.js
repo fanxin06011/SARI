@@ -28,6 +28,20 @@ function Line(Observer) {
         cmp_option = 'separate',      // ['separate', 'diff']
         display_option = 'abs';  // ['abs', 'per']
 
+    let model1 = new Model('empty'), model2 = new Model('empty');  // model loaded from the database or true_data
+    let model_code = ['A', 'B'];
+    // let sort_f = function(a, b){
+    //                 return a[1] < b[1] ? -1 : 1;
+    //             };
+    let my_sort = function(data, f){
+        if (f === null){
+            return data.sort();
+        }
+        else{
+            data.sort((a, b) => f(a) < f(b) ? -1 : 1);
+        }
+    };
+
     cal_params_changed();
     cmp_params_changed();
     display_params_changed();
@@ -44,11 +58,110 @@ function Line(Observer) {
         display_params_changed();
     });
 
+    $('#data-source1-select').change(function(){
+        console.log($(this).val());
+    });
+    $('#data-source2-select').change(function(){
+       console.log($(this).val());
+    });
+
 
     $('input[name="line"]').change(function () {
         lineType = ($(this).attr("id"));
         drawLines();
     });
+
+    class Model{
+        constructor(type, data, time_range) {
+            /**
+             * @type: empty, true_data or model_name
+             */
+            this.type = type;
+            this.data = data;
+            this.time_range = time_range;
+            this.n_days = time_range[1] - time_range[0] + 1;
+            // this.status = 'loaded';   // status: loaded or waiting. if waiting, this.data will be filled with incoming new data
+
+            if (type === 'true_data'){
+                this.handled_data = this.handle_ture_data(this.data);
+            }
+            else if (type === 'empty'){
+                this.handled_data = this.handle_empty_data(this.data);
+            }
+            else{
+                this.handled_data = this.handle_model_data(this.data);
+            }
+        }
+
+        get_pairs(){
+            let pairs_data;
+            if (display_option === 'per'){
+                let data_per = {};
+                for (let k of keys){
+                    data_per[k] = [];
+                }
+                console.log('per ', data_per);
+                let sum_tmp = 0;
+
+                for (let i = 0; i < this.n_days; i++) {
+                    // true data
+                    sum_tmp = 0;
+                    for (let key in this.handled_data) {
+                        if (this.handled_data.hasOwnProperty(key)) {
+                            sum_tmp = sum_tmp + this.handled_data[key][i];
+                        }
+                    }
+                    for (let key of keys) {
+                        if (key in this.handled_data) {
+                            data_per[key].push(this.handled_data[key][i] / sum_tmp);
+                        }
+                    }
+                }
+                pairs_data = Object.entries(data_per);
+            }
+            else{
+                pairs_data = Object.entries(this.handled_data).filter(d => d[0] in keys);
+            }
+            pairs_data = my_sort(pairs_data, d => d[0]);
+            return pairs_data;
+        }
+
+        handle_ture_data(true_data){
+            let population = 0;
+            for (let province in province_population){
+                if (province === '全国' || province === '其他') continue;
+                if (true_data.area[province]){
+                    population += province_population[province];
+                }
+            }
+            let {left, right} = true_data.time;
+            let I = true_data.diagnosed_accu.slice(left, right + 1);
+            let R = true_data.cure_accu.slice(left, right + 1).map((d, i) => d + true_data.dead_accu.slice(left, right + 1)[i]);
+            let U = I.map((d, i) => population - I[i] - R[i]);
+            console.log('all population', population);
+            if (cal_option === 'new'){
+                I = get_new_data(I);
+                R = get_new_data(R);
+                U = get_new_data(U);
+            }
+            return {'Recovered': R, 'Unknown': U, 'Infectious': I};
+        }
+
+        handle_model_data(model_data){
+            if (cal_option === 'new'){
+                for (let k in model_data){
+                    if (model_data.hasOwnProperty(k)) {
+                        model_data[k] = get_new_data(model_data[k]);
+                    }
+                }
+            }
+            return model_data;
+        }
+
+        handle_empty_data(empty_data){
+            return {'Recovered': [], 'Unknown': [], 'Infectious': []};
+        }
+    }
 
     function cal_params_changed(){
         d3.selectAll('tr#data-cal button').classed('option-selected', function(){
@@ -68,7 +181,7 @@ function Line(Observer) {
         });
     }
 
-    function get_diff_data(arr){
+    function get_new_data(arr){
         let ans = [arr[0]];
         for (let i = 1; i < arr.length; ++i){
             ans.push(arr[i] - arr[i - 1]);
@@ -76,44 +189,17 @@ function Line(Observer) {
         return ans;
     }
 
-    function handle_ture_data(true_data){
-		let population = 0;
-		for (let province in province_population){
-			if (province === '全国' || province === '其他') continue;
-			if (true_data.area[province]){
-				population += province_population[province];
-			}
-		}
-		let {left, right} = true_data.time;
-		let I = true_data.diagnosed_accu.slice(left, right + 1);
-		let R = true_data.cure_accu.slice(left, right + 1).map((d, i) => d + true_data.dead_accu.slice(left, right + 1)[i]);
-		let U = I.map((d, i) => population - I[i] - R[i]);
-		console.log('all population', population);
-		if (cmp_option === 'diff'){
-		    I = get_diff_data(I);
-		    R = get_diff_data(R);
-		    U = get_diff_data(U);
-        }
-		return {'Recovered': R, 'Unknown': U, 'Infectious': I};
-	}
-
-	function handle_modle_data(model_data){
-        if (cmp_option === 'diff'){
-            I = get_diff_data(I);
-            R = get_diff_data(R);
-            U = get_diff_data(U);
-        }
-    }
-
-    function drawLines() {
+    function drawLines(time_range) {
         svg.selectAll("*").remove();
         // var true_data = dataAll[0];
-		let original_input_truedata = dataAll[0];
-		let true_data = handle_ture_data(dataAll[0]);
-        let model_data = dataAll[1];
+		// let original_input_truedata = dataAll[0];
+		// let true_data = handle_ture_data(dataAll[0]);
+        // let model_data = dataAll[1];
 
-        console.log('true data', true_data);
-        console.log('model data', model_data);
+
+        // console.log('true data', true_data);
+        // console.log('model data', model_data);
+        // if (model1.type === 'true')
 
         // var keys = _.keys(model_data);
         // if (keys.length === 0) {
@@ -123,74 +209,48 @@ function Line(Observer) {
         // var maxnum = _.max(_.map(values, function (v) {
         //     return _.max(v);
         // }));
-		var n_days = original_input_truedata.time.right - original_input_truedata.time.left + 1;
+		let n_days = time_range[1] - time_range[0] + 1;
 		// var pairs_true_data = _.pairs(true_data);
 		// var pairs_model_data = _.pairs(model_data);
 		// let keys = _.keys(model_data);
 		// if (Object.keys(model_data).length === 0) return;
-		var n_lines = keys.length;
+		let n_lines = keys.length;
 		// var maxnum = Math.max(_.max(pairs_model_data.map(d => _.max(d[1]))), _.max(pairs_true_data.map(d => _.max(d[1]))));
-		let pairs_true_data, pairs_model_data;
+		// let pairs_true_data, pairs_model_data;
 		let maxnum;
 		let data_format = lineType === 'line_per' ? d3.format('.0p') : d3.format('.0s');
 
-        // 计算百分比数据
-        //  比如某天疑似的百分比指的是 当天疑似的人数/（当天疑似+潜伏+感染+康复）
-        if (lineType === "line_per") {
-            // pairs_true_data = keys.map(d => {d: []});
-            // pairs_model_data = keys.map(d => [d, []]);
-			let true_data_per = {};
-			let model_data_per = {};
-			for (let k of keys){
-				true_data_per[k] = [];
-				model_data_per[k] = [];
-			}
-            console.log('per ', true_data_per);
-            let sum_tmp = 0;
-
-            for (let i = 0; i < n_days; i++) {
-            	// true data
-                sum_tmp = 0;
-                for (let key in true_data) {
-                    sum_tmp = sum_tmp + true_data[key][i];
-                }
-                for (let key of keys) {
-                	true_data_per[key].push(true_data[key][i] / sum_tmp);
-                }
-
-                // model data
-				sum_tmp = 0;
-                for (let key in model_data){
-                	if (model_data.hasOwnProperty(key)) {
-						sum_tmp += model_data[key][i];
-					}
-				}
-                for (let key of keys){
-                	if (model_data.hasOwnProperty(key)){
-						model_data_per[key].push(model_data[key][i] / sum_tmp);
-					}
-				}
-            }
-            pairs_true_data = Object.entries(true_data_per);
-			pairs_model_data = Object.entries(model_data_per);
-			maxnum = Math.max(_.max(pairs_model_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))),
-                _.max(pairs_true_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))));
+        let pairs_model1_data = model1.get_pairs();
+        let pairs_model2_data = model2.get_pairs();
+        let data_collection;
+        if (cmp_option === 'separate'){
+            data_collection = [pairs_model1_data, pairs_model2_data];
         }
-        else{
-			pairs_true_data = Object.entries(true_data).filter(d => keys_set.has(d[0]));
-			pairs_model_data = Object.entries(model_data).filter(d => keys_set.has(d[0]));
-			maxnum = Math.max(_.max(pairs_model_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))),
-                _.max(pairs_true_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))));
-		}
-        console.log('maxnum ', maxnum);
+        else if (cmp_option === 'diff'){
+            data_collection = [];
+            for (let i = 0; i < keys.length; ++i) {
+                let n = pairs_model1_data[i][1].length;
+                let arr = [];
+                for (let j = 0; j < n; ++j) {
+                    arr.push(pairs_model1_data[i][1][j] - pairs_model2_data[i][1][j]);
+                }
+                data_collection.push([keys[i], arr]);
+            }
+        }
 
-        console.log('handled true data', pairs_true_data);
-		console.log('handled model data', pairs_model_data);
+        // maxnum = Math.max(_.max(pairs_model1_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))),
+        //             _.max(pairs_model2_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))));
+        maxnum = _.max(data_collection.map(model_d => _.max(model_d.map(d => _.max(d[1])))));
 
-		console.log('brushed time', original_input_truedata['time']);
+        // console.log('handled model1 data', pairs_model1_data);
+		// console.log('handled model2 data', pairs_model2_data);
+        console.log('data collection', data_collection);
+        console.log('max value', maxnum);
+
+		console.log('brushed time', time_range);
         let x_scale = d3.scaleTime()
-            .domain([new Date(timeStart + original_input_truedata["time"]["left"] * 24 * 60 * 60 * 1000),
-				new Date(timeStart + original_input_truedata["time"]["right"] * 24 * 60 * 60 * 1000)])
+            .domain([new Date(timeStart + time_range[0] * 24 * 60 * 60 * 1000),
+				new Date(timeStart + time_range[1] * 24 * 60 * 60 * 1000)])
             .range([padding.left, width - padding.right]);
         let y_scale_linear = d3.scaleLinear().domain([0, maxnum]).range([height - padding.bottom, padding.top]);
         let y_scale_log = d3.scaleLog().domain([1, maxnum]).range([height - padding.bottom, padding.top]);
@@ -198,10 +258,10 @@ function Line(Observer) {
         let lineCurve = d3.line()
             .curve(d3.curveCatmullRom)
             .x(function (d, i) {
-                return x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + i) * 24 * 60 * 60 * 1000));
+                return x_scale(new Date(timeStart + (time_range[0] + i) * 24 * 60 * 60 * 1000));
             })
             .y(function (d) {
-                return lineType === 'line_per' ? y_scale_linear(d) : y_scale_log(Math.max(d, 1));
+                return display_option === 'per' ? y_scale_linear(d) : y_scale_log(Math.max(d, 1));
             });
 
         //var backg=svg.append("g").attr("class","backg");
@@ -214,25 +274,53 @@ function Line(Observer) {
         let tooltip = d3.select('div#line-tooltip')
             .style('display', 'none')
             .html(function(){
-                let true_rows = ``;
+                let n_models = data_collection.length;
                 let col0, col1, col2;
-                for (let i = 0; i < keys.length; ++i){
-                    col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">真实数据</td>`;
-                    col1 = `<td>${keysMap[keys[i]]}</td>`;
-                    col2 = `<td class="data-cell"></td>`;
-                    if (i === 0) true_rows += `<tr value-type="true" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
-                    else true_rows += `<tr value-type="true" value-name="${keys[i]}">${col1 + col2}</tr>`;
+                let rows = ``;
+                let model_rows;
+                if (cmp_option === 'separate') {
+                    for (let i = 0; i < n_models; ++i) {
+                        model_rows = ``;
+                        for (let j = 0; j < keys.length; ++j) {
+                            col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">${String.fromCharCode(65 + i)}</td>`;
+                            col1 = `<td>${keysMap[keys[j]]}</td>`;
+                            col2 = `<td class="data-cell"></td>`;
+                            if (j === 0) model_rows += `<tr value-type="${i}" value-name="${keys[j]}">${(col0 + col1 + col2)}</tr>`;
+                            else model_rows += `<tr value-type="${i}" value-name="${keys[j]}">${col1 + col2}</tr>`;
+                        }
+                        rows += model_rows;
+                    }
                 }
-                let model_rows = ``;
-                for (let i = 0; i < keys.length; ++i){
-                    col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">模型预测</td>`;
-                    col1 = `<td>${keysMap[keys[i]]}</td>`;
-                    col2 = `<td class="data-cell"></td>`;
-                    if (i === 0) model_rows += `<tr value-type="model" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
-                    else model_rows += `<tr value-type="model" value-name="${keys[i]}">${col1 + col2}</tr>`;
+                else if (cmp_option === 'diff'){
+                    model_rows = ``;
+                    for (let j = 0; j < keys.length; ++j) {
+                        col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">A - B</td>`;
+                        col1 = `<td>${keysMap[keys[j]]}</td>`;
+                        col2 = `<td class="data-cell"></td>`;
+                        if (j === 0) model_rows += `<tr value-type="1" value-name="${keys[j]}">${(col0 + col1 + col2)}</tr>`;
+                        else model_rows += `<tr value-type="1" value-name="${keys[j]}">${col1 + col2}</tr>`;
+                    }
                 }
-                let table = `<table class="table">${true_rows + model_rows}</table>`;
-                return table;
+                return `<table class="table">${rows}</table>`;
+                // let model1_rows = ``;
+                // let col0, col1, col2;
+                // for (let i = 0; i < keys.length; ++i){
+                //     col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">真实数据</td>`;
+                //     col1 = `<td>${keysMap[keys[i]]}</td>`;
+                //     col2 = `<td class="data-cell"></td>`;
+                //     if (i === 0) model1_rows += `<tr value-type="true" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
+                //     else model1_rows += `<tr value-type="true" value-name="${keys[i]}">${col1 + col2}</tr>`;
+                // }
+                // let model2_rows = ``;
+                // for (let i = 0; i < keys.length; ++i){
+                //     col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">模型预测</td>`;
+                //     col1 = `<td>${keysMap[keys[i]]}</td>`;
+                //     col2 = `<td class="data-cell"></td>`;
+                //     if (i === 0) model2_rows += `<tr value-type="model" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
+                //     else model2_rows += `<tr value-type="model" value-name="${keys[i]}">${col1 + col2}</tr>`;
+                // }
+                // let table = `<table class="table">${model1_rows + model2_rows}</table>`;
+                // return table;
             });
         let selection_rect = svg.append('rect')
             .attr('x', padding.left)
@@ -244,27 +332,33 @@ function Line(Observer) {
             .on('mousemove', function(){
                 let pos = d3.mouse(svg.node());
                 let cursorpoint_radius = 5;
-                let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart - original_input_truedata["time"]["left"] * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
-                let rounded_x_pos = x_scale(new Date(timeStart + (original_input_truedata["time"]["left"] + day_idx) * 24 * 60 * 60 * 1000));
-                let true_points = pairs_true_data.map(d => ['true_data', d[0], d[1][day_idx]]);
-                let model_points = pairs_model_data.map(d => ['model_data', d[0], d[1][day_idx]]);
-                let sort_f = function(a, b){
-                    return a[1] < b[1] ? -1 : 1;
-                };
-                true_points.sort(sort_f);
-                model_points.sort(sort_f);
-                let points = true_points.concat(model_points);
+                let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart - time_range[0] * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
+                let rounded_x_pos = x_scale(new Date(timeStart + (time_range[0] + day_idx) * 24 * 60 * 60 * 1000));
+                // let true_points = pairs_true_data.map(d => ['true_data', d[0], d[1][day_idx]]);
+                // let model_points = pairs_model_data.map(d => ['model_data', d[0], d[1][day_idx]]);
+                // true_points.sort(sort_f);
+                // model_points.sort(sort_f);
+                // let points = true_points.concat(model_points);
+                // let points = [];
+                // for (let i = 0; i < data_collection.length; ++i){
+                //     points = points.concat(data_collection[i].map(d => [model_code[i], d[0], d[1][day_idx]]));
+                // }
+                let points_collection = data_collection.map((model_d, i) => model_d.map((d, j) => [model_code[i], d[0], d[1][day_idx]]));
+                let points = [];
+                for (let points_pair of points_collection){
+                    points = points.concat(points_pair);
+                }
 
                 let points_update = cursor_points.selectAll('circle').data(points);
                 let points_enter = points_update.enter()
                     .append('circle')
                     .attr('cx', rounded_x_pos)
-                    .attr('cy', d => lineType === 'line_per' ? y_scale_linear(d[2]) : y_scale_log(d[2]))
+                    .attr('cy', d => display_option === 'per' ? y_scale_linear(d[2]) : y_scale_log(d[2]))
                     .attr('r', cursorpoint_radius)
                     .style('fill', d => colorArr[d[1]]);
                 points_update
                     .attr('cx', rounded_x_pos)
-                    .attr('cy', d => lineType === 'line_per' ? y_scale_linear(d[2]) : y_scale_log(d[2]))
+                    .attr('cy', d => display_option === 'per' ? y_scale_linear(d[2]) : y_scale_log(d[2]))
                     .attr('r', cursorpoint_radius)
                     .style('fill', d => colorArr[d[1]]);
                 points_update.exit().remove();
@@ -280,14 +374,12 @@ function Line(Observer) {
                         return (d3.event.x - 20 - $(this).width()) + 'px';
                     })
                     .style('top', (d3.event.y + 10) + 'px');
-                let text_format = lineType === 'line_per' ? data_format : d => Math.round(d);
-                for (let i = 0; i < true_points.length; ++i){
-                    tooltip.select(`tr[value-type=true][value-name=${true_points[i][1]}] td.data-cell`)
-                        .text(text_format(true_points[i][2]));
-                }
-                for (let i = 0; i < model_points.length; ++i){
-                    tooltip.select(`tr[value-type=model][value-name=${model_points[i][1]}] td.data-cell`)
-                        .text(text_format(model_points[i][2]));
+                let text_format = display_option === 'per' ? data_format : d => Math.round(d);
+                for (let i = 0; i < data_collection.length; ++i){
+                    for (let j = 0; j < keys.length; ++j) {
+                        tooltip.select(`tr[value-type=${i}][value-name=${points_collection[i][j][1]}] td.data-cell`)
+                            .text(text_format(points_collection[i][j][2]));
+                    }
                 }
             })
             .on('mouseout', function(){
@@ -302,39 +394,24 @@ function Line(Observer) {
                 tooltip.style('display', 'block')
             })
             .raise();
-        let true_data_group = lineg.append('g')
-			.attr('class', 'true-data')
-            .selectAll("g")
-            .data(pairs_true_data)
-            .enter().append("g");
-        let model_data_group = lineg.append('g')
-			.attr('class', 'model-data')
-			.selectAll('g')
-			.data(pairs_model_data)
-			.enter()
-			.append('g');
-
-        true_data_group.append("path")
-            .attr("class", "line")
-            .attr("d", function (d) {
+        let data_groups = lineg.selectAll('g')
+            .data(data_collection)
+            .enter()
+            .append('g')
+            .selectAll('g')
+            .data(d => d)
+            .enter()
+            .append('g');
+        data_groups.append('path')
+            .attr('class', 'line')
+            .attr('d', function(d){
                 return lineCurve(d[1]);
             })
-            .style("stroke", function (d) {
+            .style('stroke', function(d){
                 return colorArr[d[0]];
             })
-            .style("stroke-width", "2px")
-            .style("fill", "none");
-        model_data_group.append("path")
-            .attr("class", "line")
-            .attr("d", function (d) {
-                return lineCurve(d[1]);
-            })
-            .style("stroke", function (d) {
-                return colorArr[d[0]];
-            })
-            .style("stroke-width", "2px")
-			.style('stroke-dasharray', '5, 5')
-            .style("fill", "none");
+            .style('stroke-width', '2px')
+            .style('fill', 'none');
 
         lineg.append("g")
             .attr("class", "x axis")
@@ -343,7 +420,7 @@ function Line(Observer) {
 
         // var y_axis = d3.axisLeft(y_scale);
         let y_axis;
-        if (lineType === "line_per") {
+        if (display_option === "per") {
             y_axis = d3.axisLeft(y_scale_linear);
             y_axis.tickFormat(d3.format(".0p"));
         }
@@ -381,30 +458,37 @@ function Line(Observer) {
             });
 
         // 曲线style标签说明
-		let type = ['真实数据', '预测结果'];
-		let legend_style = lineg.append('g').attr('class', 'label-linestyle')
-			.selectAll('g')
-			.data(type)
-			.enter()
-			.append('g')
-			.attr('transform', function(d, i){
-				return `translate(${[width - padding.right - 120 * (i + 1), padding.top - 20]})`;
-			});
-		legend_style.append('line')
-			.attr('x1', 0)
-			.attr('x2', 30)
-			.attr('y1', 10)
-			.attr('y2', 10)
-			.style('stroke', 'black')
-			.style('stroke-width', 2)
-			.style('stroke-dasharray', function(d, i){
-				return i === 0 ? '10, 0' : '3, 3';
-			});
-		legend_style.append('text')
-			.attr('x', 40)
-			.attr('y', 10)
-			.style('dominant-baseline', 'middle')
-			.text(d => d);
+        let type;
+		if (cmp_option === 'separate'){
+		    type = ['A', 'B'];
+        }
+		else{
+		    type = ['A - B'];
+        }
+        let legend_style = lineg.append('g').attr('class', 'label-linestyle')
+            .selectAll('g')
+            .data(type)
+            .enter()
+            .append('g')
+            .attr('transform', function (d, i) {
+                return `translate(${[width - padding.right - 120 * (i + 1), padding.top - 20]})`;
+            });
+        legend_style.append('line')
+            .attr('x1', 0)
+            .attr('x2', 30)
+            .attr('y1', 10)
+            .attr('y2', 10)
+            .style('stroke', 'black')
+            .style('stroke-width', 2)
+            .style('stroke-dasharray', function (d, i) {
+                return i === 0 ? '10, 0' : '3, 3';
+            });
+        legend_style.append('text')
+            .attr('x', 40)
+            .attr('y', 10)
+            .style('dominant-baseline', 'middle')
+            .text(d => d);
+
     }
 
     line.onMessage = function (message, data, from) {

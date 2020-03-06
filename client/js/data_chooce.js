@@ -13,8 +13,8 @@ let DataPanel = function (data, provinces) {
     this.place_is_choose['其它'] = true;
 
     this.margin = {left: 0, right: 0, top: 0, bottom: 0};
-    this.width = document.getElementById('area_choose').clientWidth - this.margin.left - this.margin.right,
-        this.height = document.getElementById('area_choose').clientHeight - this.margin.top - this.margin.bottom;
+    this.width = document.getElementById('area_choose').clientWidth - this.margin.left - this.margin.right;
+    this.height = document.getElementById('area_choose').clientHeight - this.margin.top - this.margin.bottom;
     this.svg = d3.select("#area_choose").append("svg")
         .attr("id", "panel_svg")
         .attr("font-family", "Arial")
