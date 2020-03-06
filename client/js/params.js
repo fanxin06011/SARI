@@ -6,6 +6,7 @@ var current_index = 0;
 var current_arr = new Array();
 var model_arr = new Array();
 var all_useful_model = new Array();
+
 function Params(Observer){
 	var params={};
 	var duration=50;
@@ -18,8 +19,8 @@ function Params(Observer){
 
 	var paramsIdArr=["infectRate","recoverRate","gamma_1", "gamma_2", "sigma", "delta", "delta_1", "delta_2", "mu", "initSusceptibleNum","initInfectedNum","initIncubatedNum","initRecoverNum", "initConfirmNum", "initDeadNum"];
 
-	for(var i=0;i<paramsIdArr.length;i++){
-		$('#'+paramsIdArr[i]).slider({formatter: function (value) {return 'Current value: ' + value;  }})
+	for(var i = 0; i < paramsIdArr.length; i++){
+		$('#' + paramsIdArr[i]).slider({formatter: function (value) {return 'Current value: ' + value;  }})
 		.on('change', function (e) {
 			// window.clearTimeout(timeOutFunction);
 			// timeOutFunction = setTimeout(function () {
@@ -27,7 +28,7 @@ function Params(Observer){
 			// },500)
 			change_param(1, e.target.id);
 		});
-		$('#cur_'+paramsIdArr[i]).on("input propertychange", function(e){
+		$('#cur_' + paramsIdArr[i]).on("input propertychange", function(e){
 			change_param(0, e.target.name);
 		});
 	}
@@ -35,6 +36,7 @@ function Params(Observer){
 	function fix_4(a){
 		return Math.floor(a * 10000) / 10000;
 	}
+
 	function toPercent(point){
 		var str = Number(point*100).toFixed(2);
 		str += "%";
@@ -103,29 +105,59 @@ function Params(Observer){
 			}
 		}
 		else if(type == 0){
-			$("#" + data).slider('setValue', $('#cur_' + data).val());
 			if(modelUsed == 1){
 				if(data == "initSusceptibleNum"){
-					$("#initIncubatedNum").slider('setValue', Sus_E - $('#cur_' + data).val());
-					$("#cur_initIncubatedNum").val(Sus_E - $('#cur_' + data).val());
+					var s_per = parseFloat($('#cur_' + data).val().slice(0, -1)) / 100;
+					var s = Math.floor(s_per * total_num);
+					$("#" + data).slider('setValue', s);
+					$("#initIncubatedNum").slider('setValue', Sus_E - s);
+					$("#cur_initIncubatedNum").val(toPercent(total_per - s_per));
 				}
-				if(data == "initIncubatedNum"){
-					$("#initSusceptibleNum").slider('setValue', Sus_E - $('#cur_' + data).val());
-					$("#cur_initSusceptibleNum").val(Sus_E - $('#cur_' + data).val());
+				else if(data == "initIncubatedNum"){
+					var e_per = parseFloat($('#cur_' + data).val().slice(0, -1)) / 100;
+					var e = Math.floor(e_per * total_num);
+					$("#" + data).slider('setValue', e);
+					$("#initSusceptibleNum").slider('setValue', Sus_E - e);
+					$("#cur_initSusceptibleNum").val(toPercent(total_per - e_per));
+				}
+				else{
+					$("#" + data).slider('setValue', $('#cur_' + data).val());
 				}
 			}
 			else if(modelUsed == 2){
 				if(data == "initSusceptibleNum"){
-					$("#initInfectedNum").slider('setValue', Sus_I - $('#cur_' + data).val());
-					$("#cur_initInfectedNum").val(Sus_I - $('#cur_' + data).val());
+					var s_per = parseFloat($('#cur_' + data).val().slice(0, -1)) / 100;
+					var s = Math.floor(s_per * total_num);
+					$("#" + data).slider('setValue', s);
+					$("#initInfectedNum").slider('setValue', Sus_I - s);
+					$("#cur_initInfectedNum").val(toPercent(total_per - s_per));
 				}
-				if(data == "initInfectedNum"){
-					$("#initSusceptibleNum").slider('setValue', Sus_I - $('#cur_' + data).val());
-					$("#cur_initSusceptibleNum").val(Sus_I - $('#cur_' + data).val());
+				else if(data == "initInfectedNum"){
+					var i_per = parseFloat($('#cur_' + data).val().slice(0, -1)) / 100;
+					var i = Math.floor(i_per * total_num);
+					$("#" + data).slider('setValue', i);
+					$("#initSusceptibleNum").slider('setValue', Sus_I - i);
+					$("#cur_initSusceptibleNum").val(toPercent(total_per - i_per));
+				}
+				else{
+					$("#" + data).slider('setValue', $('#cur_' + data).val());
+				}
+			}
+			else{
+				if(data == "initSusceptibleNum"){
+					var s_per = parseFloat($('#cur_' + data).val().slice(0, -1)) / 100;
+					var s = Math.floor(s_per * total_num);
+					$("#" + data).slider('setValue', s);
+				}
+				else{
+					$("#" + data).slider('setValue', $('#cur_' + data).val());
 				}
 			}
 		}
-		// params.getdata();
+		// 
+		if((("model" + current_model) == model1.type) || (("model" + current_model) == model2.type)){
+			params.getdata([model1.type, model2.type]);
+		}
 	}
 
 	var modelUsed=parseInt(document.getElementById("modelUsed").value);
@@ -201,7 +233,7 @@ function Params(Observer){
 			let event_name = "update_data_range";
 	
 			var newtype=parseInt(document.getElementById("modelUsed").value);
-			Observer.fireEvent(event_name, newtype, params);
+			// Observer.fireEvent(event_name, newtype, params);
 
 			if(modelUsed!=newtype){
 				modelUsed=newtype;
@@ -341,6 +373,7 @@ function Params(Observer){
 				current_index = 0;
 				current_model = 0;
 				current_arr = current_arr.slice(0, current_arr.length - 1);
+				Observer.fireEvent("delete_model", 0, params);
 			}
 		});
 	});
@@ -631,6 +664,12 @@ function Params(Observer){
 					$("#row1_col1").css("background-color", "#F5F5F5");
 					$("#row2_col1").css("background-color", "#F5F5F5");
 					all_models["model" + model_num] = {"saved": false, "No": model_num, "Deleted": false, "current_index": model_num};
+					all_models["model" + model_num].model_type = parseInt(document.getElementById("modelUsed").value);
+					let params = {};
+					for(var i = 0; i < paramsIdArr.length; i++){
+						params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
+					}
+					all_models["model" + model_num].parameters = params;
 					document.getElementById("modelSave1").onclick=function(){
 						operate_model(Number(this.name));
 					}
@@ -699,6 +738,12 @@ function Params(Observer){
 							}
 						}
 						has_saved = false;
+						all_models["model" + model_num].model_type = parseInt(document.getElementById("modelUsed").value);
+						let params = {};
+						for(var i = 0; i < paramsIdArr.length; i++){
+							params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
+						}
+						all_models["model" + model_num].parameters = params;
 					}
 					else{
 						alert("模型未保存！");

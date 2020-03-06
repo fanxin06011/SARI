@@ -138,6 +138,20 @@ span,text,button, input, select, textarea{
 }
 #model_output{
 	left:0%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#line-panel{
+	margin: 5px;
+	background-color: #fff;
+	border-radius: 7px;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#param_set{
+	background-color: #F5F5F5;
 }
 #line-div{
 	left:0%;
@@ -255,4 +269,14 @@ div#model_param input[type=text]{
 }
 #op_button{
 	opacity: 0;
+}
+
+#middle-bottom-div button{
+    transition-duration: 0.2s;
+    background-color: #999;
+    text-align: center;
+    width: 80px;
+    border: 2px solid #aaa;
+	border-radius: 5px;
+	outline:none;
 }
