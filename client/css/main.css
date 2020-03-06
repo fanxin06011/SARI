@@ -1,3 +1,13 @@
+@font-face {
+	font-family: 'iconfont';  /* project id 1154007 */
+	src: url('//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.eot');
+	src: url('//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.eot?#iefix') format('embedded-opentype'),
+	url('//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.woff2') format('woff2'),
+	url('//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.woff') format('woff'),
+	url('//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.ttf') format('truetype'),
+	url('//at.alicdn.com/t/font_1154007_4ge4oh3sfn8.svg#iconfont') format('svg');
+}
+
 body {
 	color: #000;
 	background-color: #d5d5d5;
@@ -70,6 +80,27 @@ span,text,button, input, select, textarea{
 	height: 8%;
 	flex:none;
 	display: flex;
+	flex-direction: row;
+	align-items:center;
+}
+#left_arrow{
+	left:0%;
+	width: 8%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#model_save{
+	left:8%;
+	width: 84%;
+	height: 100%;
+	flex:none;
+	display: flex;
+	flex-direction: column;
+}
+#right_arrow{
+	flex:1;
+	display: flex;
 	flex-direction: column;
 }
 #middle-bottom-div{
@@ -96,6 +127,9 @@ span,text,button, input, select, textarea{
 	flex:1;
 	display: flex;
 	flex-direction: column;
+}
+#parameters_table{
+	display: none;
 }
 #right-div{
 	flex:1;
@@ -193,7 +227,7 @@ span,text,button, input, select, textarea{
 	cursor: text;
 }
 
-div#middle-top-div input[type=text]{
+div#model_param input[type=text]{
 	border: none;
 }
 
@@ -203,4 +237,22 @@ div#middle-top-div input[type=text]{
 	font-size: 20px;
 	text-align: center;
 	border-radius: 7px;
+}
+
+.arrow_btn{
+	padding: 0;
+	text-align: center;
+	border-style: none;     
+	outline: none;    
+	background-color: #fff;
+}
+.model_btn{
+	padding: 0;
+	text-align: center;
+	border-style: none;     
+	outline: none;    
+	background-color: #fff;
+}
+#op_button{
+	opacity: 0;
 }
