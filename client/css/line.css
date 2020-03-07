@@ -25,3 +25,7 @@
     background-color: #666;
     color: white;
 }
+
+[disabled]{
+    cursor: not-allowed;
+}

@@ -154,7 +154,16 @@ function Params(Observer){
 				}
 			}
 		}
-		// 
+
+		all_models["model" + current_model].saved = false;
+		all_models["model" + current_model].model_type = parseInt(document.getElementById("modelUsed").value);
+		let _params = {};
+		for(var i = 0; i < paramsIdArr.length; i++){
+			_params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
+		}
+		all_models["model" + current_model].tmp_parameter = _params;
+
+		console.log('change param')
 		if((current_model === parseInt(model1.type)) || (current_model === parseInt(model2.type))){
 			params.getdata([model1.type, model2.type]);
 		}
@@ -233,13 +242,23 @@ function Params(Observer){
 			let event_name = "update_data_range";
 	
 			var newtype=parseInt(document.getElementById("modelUsed").value);
-			// Observer.fireEvent(event_name, newtype, params);
+			all_models["model" + current_model].saved = false;
+			all_models["model" + current_model].model_type = parseInt(document.getElementById("modelUsed").value);
+			let _params = {};
+			for(var i = 0; i < paramsIdArr.length; i++){
+				_params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
+			}
+			all_models["model" + current_model].tmp_parameter = _params;
+			// Observer.fireEvent(event_name, newtype, _params);
 
 			if(modelUsed!=newtype){
 				modelUsed=newtype;
 				$(".modelImage").hide();
 				$("#modelImage"+modelUsed).show();
 				show_params(newtype);
+				if((current_model === parseInt(model1.type)) || (current_model === parseInt(model2.type))){
+					params.getdata([model1.type, model2.type]);
+				}
 			}
 		});
 		$(".slider.slider-horizontal").width($("#middle-top-div").width()-250)
@@ -318,6 +337,7 @@ function Params(Observer){
 				params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
 			}
 			all_models["model" + current_model].parameters = params;
+			all_models["model" + current_model].tmp_parameter = params;
 		});
 		$("#Cancel").click(function(event){
 			if(has_saved == false){
@@ -385,18 +405,19 @@ function Params(Observer){
 				let obj = {};
 				if (parseInt(model_name) !== current_model) {
 					let used_model = all_models['model' + model_name];
-					console.log('used model', used_model)
 					obj.type = used_model.model_type;
 					obj.params = used_model.parameters;
 					obj.params.duration = duration;
 				}
 				else{
-					let obj = {};
+					let used_model = all_models['model' + model_name];
 					obj.type = parseInt(document.getElementById("modelUsed").value);
-					obj.params = tmp_parameter;
+					console.log('type', obj.type)
+					obj.params = used_model.tmp_parameter;
 					obj.params.duration = duration;
 				}
 				objs.data.push(obj);
+				console.log('obj', objs)
 				console.log('params', obj.params)
 			}
 		}
@@ -678,7 +699,7 @@ function Params(Observer){
 					for(var i = 0; i < paramsIdArr.length; i++){
 						params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
 					}
-					all_models["model" + model_num].parameters = params;
+					all_models["model" + model_num].tmp_parameter = params;
 					document.getElementById("modelSave1").onclick=function(){
 						operate_model(Number(this.name));
 					}
@@ -752,7 +773,7 @@ function Params(Observer){
 						for(var i = 0; i < paramsIdArr.length; i++){
 							params[paramsIdArr[i]] = parseFloat($('#' + paramsIdArr[i]).val())
 						}
-						all_models["model" + model_num].parameters = params;
+						all_models["model" + model_num].tmp_parameter = params;
 					}
 					else{
 						alert("模型未保存！");

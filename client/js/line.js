@@ -118,11 +118,6 @@ class Model{
             let new_I = this.get_new_data(I);
             let new_R = this.get_new_data(R);
             let new_U = this.get_new_data(U);
-            // if (cal_option === 'new'){
-            //     I = this.get_new_data(I);
-            //     R = this.get_new_data(R);
-            //     U = this.get_new_data(U);
-            // }
             return [{'Recovered': R, 'Unknown': U, 'Infectious': I}, {'Recovered': new_R, 'Unknown': new_U, 'Infectious': new_I}];
         }
 
@@ -132,13 +127,6 @@ class Model{
             R = this.get_new_data(model_data['Recovered']);
             U = this.get_new_data(model_data['Unknown']);
             return [model_data, {'Recovered': R, 'Unknown': U, 'Infectious': I}];  // [accu, new]
-            // if (cal_option === 'new'){
-            //     I = this.get_new_data(model_data['Infectious']);
-            //     R = this.get_new_data(model_data['Recovered']);
-            //     U = this.get_new_data(model_data['Unknown']);
-            //     return {'Recovered': R, 'Unknown': U, 'Infectious': I};
-            // }
-            // else return model_data;
         }
 
         handle_empty_data(empty_data){
@@ -161,33 +149,37 @@ let model_code = ['A', 'B'];
 
 
 function Line(Observer) {
-    var line = {};
+    let line = {};
 
-    var $brtDiv = $("#line-div");
-    var width = $brtDiv.width();
-    var height = $brtDiv.height();
+    let $brtDiv = $("#line-div");
+    let width = $brtDiv.width();
+    let height = $brtDiv.height();
 
-    var padding = {
+    let padding = {
         left: 80,
         right: 50,
         top: 30,
         bottom: 30
     };
-    var timeStart = 1578585600000;
-    var lineType = "line_abs";
-    var dataAll = [];
+    let timeStart = 1578585600000;
+    let lineType = "line_abs";
+    let dataAll = [];
     let time_range;
+    let brushed_time_range;
     // let keys = ['Recovered', 'Infectious'];
     // let keys_set = new Set(keys);
-    var colorArr = {"Recovered": "#70ad47", "Unknown": "#D7D599", "Infectious": "#ED7D31"};
-    var keysMap = {"Recovered": "恢复", "Unknown": "未知", "Infectious": "确诊"};
+    let colorArr = {"Recovered": "#70ad47", "Unknown": "#D7D599", "Infectious": "#ED7D31"};
+    let keysMap = {"Recovered": "恢复", "Unknown": "未知", "Infectious": "确诊"};
 
-    var svg = d3.select("#line-div")
+    let svg = d3.select("#line-div")
         .append("svg")
         .attr("width", width)
         .attr("height", height);
 
-
+    let svg_brush = d3.select('#line-div')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
     cal_params_changed();
     cmp_params_changed();
     display_params_changed();
@@ -267,32 +259,8 @@ function Line(Observer) {
 
     function drawLines() {
         svg.selectAll("*").remove();
-        // var true_data = dataAll[0];
-		// let original_input_truedata = dataAll[0];
-		// let true_data = handle_ture_data(dataAll[0]);
-        // let model_data = dataAll[1];
+        svg_brush.selectAll('*').remove();
 
-
-        // console.log('true data', true_data);
-        // console.log('model data', model_data);
-        // if (model1.type === 'true')
-
-        // var keys = _.keys(model_data);
-        // if (keys.length === 0) {
-        //     return;
-        // }
-        // var values = _.values(model_data);
-        // var maxnum = _.max(_.map(values, function (v) {
-        //     return _.max(v);
-        // }));
-		// let n_days = time_range[1] - time_range[0] + 1;
-		// var pairs_true_data = _.pairs(true_data);
-		// var pairs_model_data = _.pairs(model_data);
-		// let keys = _.keys(model_data);
-		// if (Object.keys(model_data).length === 0) return;
-		let n_lines = keys.length;
-		// var maxnum = Math.max(_.max(pairs_model_data.map(d => _.max(d[1]))), _.max(pairs_true_data.map(d => _.max(d[1]))));
-		// let pairs_true_data, pairs_model_data;
         model1.fill_data(dataAll.data[0], time_range);
         model2.fill_data(dataAll.data[1], time_range);
 		let maxnum;
@@ -316,20 +284,17 @@ function Line(Observer) {
             }
         }
 
-        // maxnum = Math.max(_.max(pairs_model1_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))),
-        //             _.max(pairs_model2_data.filter(d => keys_set.has(d[0])).map(d => _.max(d[1]))));
         console.log('data collection', data_collection);
         maxnum = _.max(data_collection.map(model_d => _.max(model_d.map(d => _.max(d[1])))));
 
-        // console.log('handled model1 data', pairs_model1_data);
-		// console.log('handled model2 data', pairs_model2_data);
         console.log('max value', maxnum);
 
-		console.log('brushed time', time_range);
+		console.log('brushed time', brushed_time_range);
         let x_scale = d3.scaleTime()
-            .domain([new Date(timeStart + time_range.left * 24 * 60 * 60 * 1000),
-				new Date(timeStart + time_range.right * 24 * 60 * 60 * 1000)])
+            .domain([new Date(timeStart + brushed_time_range.left * 24 * 60 * 60 * 1000),
+				new Date(timeStart + brushed_time_range.right * 24 * 60 * 60 * 1000)])
             .range([padding.left, width - padding.right]);
+        let x_axis = d3.axisBottom().scale(x_scale).ticks(5);
         let y_scale_linear = d3.scaleLinear().domain([0, maxnum]).range([height - padding.bottom, padding.top]);
         let y_scale_log = d3.scaleLog().domain([1, maxnum]).range([height - padding.bottom, padding.top]);
 
@@ -342,9 +307,14 @@ function Line(Observer) {
                 return display_option === 'per' ? y_scale_linear(d) : y_scale_log(Math.max(d, 1));
             });
 
-        //var backg=svg.append("g").attr("class","backg");
-        var rectg = svg.append("g").attr("class", "rectg");
-        var lineg = svg.append("g").attr("class", "lineg").style('pointer-events', 'none');
+        let clip_path = svg.append('clipPath')
+            .attr('id', 'clip-path')
+            .append('rect')
+            .attr('x', padding.left)
+            .attr('y', padding.top)
+            .attr('width', width - padding.left - padding.right)
+            .attr('height', height - padding.top - padding.bottom);
+        let lineg = svg.append("g").attr("class", "lineg").style('pointer-events', 'none');
         let detailg = svg.append('g').attr('class', 'detailg');
         let cursor_line = detailg.append('line').style('stroke', '#aaa').style('stroke-width', 2).style('opacity', 0);
         let cursor_points = detailg.append('g');
@@ -381,25 +351,6 @@ function Line(Observer) {
                     }
                 }
                 return `<table class="table">${rows}</table>`;
-                // let model1_rows = ``;
-                // let col0, col1, col2;
-                // for (let i = 0; i < keys.length; ++i){
-                //     col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">真实数据</td>`;
-                //     col1 = `<td>${keysMap[keys[i]]}</td>`;
-                //     col2 = `<td class="data-cell"></td>`;
-                //     if (i === 0) model1_rows += `<tr value-type="true" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
-                //     else model1_rows += `<tr value-type="true" value-name="${keys[i]}">${col1 + col2}</tr>`;
-                // }
-                // let model2_rows = ``;
-                // for (let i = 0; i < keys.length; ++i){
-                //     col0 = `<td rowspan="${keys.length}" style="vertical-align: middle">模型预测</td>`;
-                //     col1 = `<td>${keysMap[keys[i]]}</td>`;
-                //     col2 = `<td class="data-cell"></td>`;
-                //     if (i === 0) model2_rows += `<tr value-type="model" value-name="${keys[i]}">${(col0 + col1 + col2)}</tr>`;
-                //     else model2_rows += `<tr value-type="model" value-name="${keys[i]}">${col1 + col2}</tr>`;
-                // }
-                // let table = `<table class="table">${model1_rows + model2_rows}</table>`;
-                // return table;
             });
         let selection_rect = svg.append('rect')
             .attr('x', padding.left)
@@ -411,22 +362,10 @@ function Line(Observer) {
             .on('mousemove', function(){
                 let pos = d3.mouse(svg.node());
                 let cursorpoint_radius = 5;
-                let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart - time_range.left * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
-                let rounded_x_pos = x_scale(new Date(timeStart + (time_range.left + day_idx) * 24 * 60 * 60 * 1000));
-                // let true_points = pairs_true_data.map(d => ['true_data', d[0], d[1][day_idx]]);
-                // let model_points = pairs_model_data.map(d => ['model_data', d[0], d[1][day_idx]]);
-                // true_points.sort(sort_f);
-                // model_points.sort(sort_f);
-                // let points = true_points.concat(model_points);
-                // let points = [];
-                // for (let i = 0; i < data_collection.length; ++i){
-                //     points = points.concat(data_collection[i].map(d => [model_code[i], d[0], d[1][day_idx]]));
-                // }
+                let day_idx = Math.round((x_scale.invert(pos[0]) - timeStart - brushed_time_range.left * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
+                let rounded_x_pos = x_scale(new Date(timeStart + (brushed_time_range.left + day_idx) * 24 * 60 * 60 * 1000));
                 let points_collection = data_collection.map((model_d, i) => model_d.map((d, j) => [model_code[i], d[0], d[1][day_idx]]));
                 let points = [];
-                // for (let points_pair of points_collection){
-                //     points = points.concat(points_pair);
-                // }
                 if (model1.type !== 'empty'){
                     points = points.concat(points_collection[0]);
                 }
@@ -492,6 +431,7 @@ function Line(Observer) {
                     .append('g')
                     .append('path')
                     .attr('class', 'line')
+                    .attr('clip-path', 'url(#clip-path)')
                     .attr('d', d => lineCurve(d[1]))
                     .style('stroke', d => colorArr[d[0]])
                     .style('stroke-width', 2)
@@ -501,32 +441,13 @@ function Line(Observer) {
                         else return '4, 4'
                     })
             });
-        // let data_groups = lineg.selectAll('g')
-        //     .data(data_collection)
-        //     .enter()
-        //     .append('g')
-        //     .selectAll('g')
-        //     .data(d => d)
-        //     .enter()
-        //     .append('g');
-        // data_groups.append('path')
-        //     .attr('class', 'line')
-        //     .attr('d', function(d, i){
-        //         console.log('datagroupidx', i)
-        //         return lineCurve(d[1]);
-        //     })
-        //     .style('stroke', function(d){
-        //         return colorArr[d[0]];
-        //     })
-        //     .style('stroke-width', '2px')
-        //     .style('fill', 'none');
 
-        lineg.append("g")
+        let xaxis_g = lineg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + (height - padding.bottom) + ")")
-            .call(d3.axisBottom(x_scale).ticks(5));
+            .call(x_axis);
 
-        // var y_axis = d3.axisLeft(y_scale);
+        // let y_axis = d3.axisLeft(y_scale);
         let y_axis;
         if (display_option === "per") {
             y_axis = d3.axisLeft(y_scale_linear);
@@ -542,7 +463,7 @@ function Line(Observer) {
             .call(y_axis);
 
         // 标签说明
-        var legend = lineg.append("g").attr("class", "labeltext")
+        let legend = lineg.append("g").attr("class", "labeltext")
             .selectAll("g")
             .data(keys)
             .enter().append("g")
@@ -597,12 +518,174 @@ function Line(Observer) {
             .style('dominant-baseline', 'middle')
             .text(d => d);
 
+        ///////////////////////////////////////////////////////
+        ///////////////////// overview视图 /////////////////////
+        ///////////////////////////////////////////////////////
+
+        let x_scale_brush = d3.scaleTime()
+            .domain([new Date(timeStart + time_range.left * 24 * 60 * 60 * 1000),
+				new Date(timeStart + time_range.right * 24 * 60 * 60 * 1000)])
+            .range([padding.left, width - padding.right]);
+
+        let lineCurveBrush = d3.line()
+            .curve(d3.curveCatmullRom)
+            .x(function (d, i) {
+                return x_scale_brush(new Date(timeStart + (time_range.left + i) * 24 * 60 * 60 * 1000));
+            })
+            .y(function (d) {
+                return display_option === 'per' ? y_scale_linear(d) : y_scale_log(Math.max(d, 1));
+            });
+
+        let brush_area = svg_brush.append('g');
+        let brush = d3.brushX()
+            .extent([[padding.left, padding.top], [width - padding.right, height - padding.bottom]])
+            .on('brush', function(){
+                if (d3.event.selection && d3.event.sourceEvent && d3.event.sourceEvent.type !== 'end'){
+                    let range = d3.event.selection;
+
+                    let start = Math.floor((x_scale_brush.invert(range[0]) - timeStart - time_range.left * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
+                    let end = Math.ceil((x_scale_brush.invert(range[1]) - timeStart - time_range.left * 24 * 60 * 60 * 1000) / 24 / 60 / 60 / 1000);
+                    brushed_time_range = {left: start + time_range.left, right: end + time_range.left};
+
+                    x_scale.domain([new Date(timeStart + brushed_time_range.left * 24 * 60 * 60 * 1000),
+                        new Date(timeStart + brushed_time_range.right * 24 * 60 * 60 * 1000)]);
+                    xaxis_g.call(x_axis);
+
+                    data_groups.selectAll('path.line')
+                        .attr('d', d => lineCurve(d[1]));
+                }
+            })
+            .on('end', function(){
+                if (!d3.event.selection){
+                    brush_area.call(brush.move, [brushed_time_range.left, brushed_time_range.right]
+                        .map(d => new Date(timeStart + d * 24 * 60 * 60 * 1000))
+                        .map(x_scale_brush));
+                }
+                else{
+                    let new_area = [brushed_time_range.left, brushed_time_range.right]
+                        .map(d => new Date(timeStart + d * 24 * 60 * 60 * 1000))
+                        .map(x_scale_brush);
+                    if (new_area[0] !== d3.event.selection[0] || new_area[1] !== d3.event.selection[1]){
+                        brush_area.transition().call(brush.move, new_area);
+                    }
+                }
+            });
+        brush_area
+            .call(brush)
+            .call(brush.move, [brushed_time_range.left, brushed_time_range.right]
+                        .map(d => new Date(timeStart + d * 24 * 60 * 60 * 1000))
+                        .map(x_scale_brush));
+
+        let lineg_brush = svg_brush.append("g").attr("class", "lineg-brush").style('pointer-events', 'none');
+        // let tooltip = $('div#line-tooltip');
+        let data_groups_brush = lineg_brush.selectAll('g')
+            .data(data_collection)
+            .enter()
+            .append('g')
+            .each(function(d, i){
+                d3.select(this).selectAll('g')
+                    .data(d)
+                    .enter()
+                    .append('g')
+                    .append('path')
+                    .attr('class', 'line')
+                    .attr('d', d => lineCurveBrush(d[1]))
+                    .style('stroke', d => colorArr[d[0]])
+                    .style('stroke-width', 2)
+                    .style('fill', 'none')
+                    .style('stroke-dasharray', function(){
+                        if (i === 0) return '10, 0';
+                        else return '4, 4'
+                    })
+            });
+
+        lineg_brush.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + (height - padding.bottom) + ")")
+            .call(d3.axisBottom(x_scale_brush).ticks(5));
+
+        // let y_axis = d3.axisLeft(y_scale);
+        let y_axis_brush;
+        if (display_option === "per") {
+            y_axis_brush = d3.axisLeft(y_scale_linear);
+            y_axis_brush.tickFormat(d3.format(".0p"));
+        }
+        else{
+            y_axis_brush = d3.axisLeft(y_scale_log);
+            y_axis_brush.tickArguments([5, '.0s']);
+        }
+        lineg_brush.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + (padding.left) + ",0)")
+            .call(y_axis_brush);
+
+        // 标签说明
+        let legend_brush = lineg_brush.append("g").attr("class", "labeltext")
+            .selectAll("g")
+            .data(keys)
+            .enter().append("g")
+            .attr("transform", function (d, i) {
+                return "translate(" + (padding.left + 50 * i) + "," + (padding.top - 20) + ")";
+            });
+        legend_brush.append("circle")
+            .attr("cx", 0)
+            .attr("cy", 10)
+            .attr("r", 5)
+            .attr("fill", function (d, i) {
+                return colorArr[d];
+            });
+        legend_brush.append("text")
+            .attr("x", function (d, i) {
+                return 10;
+            })
+            .attr("y", 12.5)
+            .text(function (d, i) {
+                return keysMap[d];
+            });
+
+        let legend_style_brush = lineg_brush.append('g').attr('class', 'label-linestyle')
+            .selectAll('g')
+            .data(type)
+            .enter()
+            .append('g')
+            .attr('transform', function (d, i) {
+                return `translate(${[width - padding.right - 80 * (type.length - i), padding.top - 20]})`;
+            });
+        legend_style_brush.append('line')
+            .attr('x1', 0)
+            .attr('x2', 30)
+            .attr('y1', 10)
+            .attr('y2', 10)
+            .style('stroke', 'black')
+            .style('stroke-width', 2)
+            .style('stroke-dasharray', function (d, i) {
+                return i === 0 ? '10, 0' : '3, 3';
+            });
+        legend_style_brush.append('text')
+            .attr('x', 40)
+            .attr('y', 10)
+            .style('dominant-baseline', 'middle')
+            .text(d => d);
+
     }
 
     line.onMessage = function (message, data, from) {
         if (message === "showResult") {
             dataAll = data;
-            time_range = data.time_range;
+            // time_range = data.time_range;
+            console.log('cmp', time_range, data.time_range)
+            if (time_range && time_range.left === data.time_range.left && time_range.right === data.time_range.right){
+
+            }
+            else{
+                time_range = {left: data.time_range.left, right: data.time_range.right};
+                brushed_time_range = {left: data.time_range.left, right: data.time_range.right};
+                console.log('jsfjioewfjowef', brushed_time_range)
+                console.log('iuushfoiweofwef', [data.time_range.left, data.time_range.right])
+            }
+            console.log('timerange spsprps', time_range)
+            console.log('brush rangeqappspsp', brushed_time_range)
+            console.log('data range', data.time_range.left, data.time_range.right)
             drawLines();
         }
         else if (message === 'add_model'){
